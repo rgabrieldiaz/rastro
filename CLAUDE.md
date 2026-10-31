@@ -4,9 +4,11 @@ Welcome to **Rastro**, an AI-powered public procurement integrity radar built du
 
 ## 🎯 Project Overview
 - **Name:** Rastro (Radar Agéntico de Integridad en Compras Públicas)
-- **Team:** Giovanny Flores (Investigative Journalist - Mexico) & Gabo (AI / Software Engineer)
+- **Team:** Giovanny Flores (Investigative Journalist - Mexico), Gabo (AI / Software Engineer), Marsetti (Software Engineer / Infrastructure)
 - **Hackathon:** Media Party Buenos Aires 2026 («Storytelling en la era de los agentes»)
 - **Dashboard:** [hackdash.org/dashboards/mpba26](https://hackdash.org/dashboards/mpba26)
+- **Live Demo:** [rastro-datos.vercel.app](https://rastro-datos.vercel.app/)
+- **Pitch Deck:** [rastro-datos.vercel.app/deck](https://rastro-datos.vercel.app/deck)
 - **Motto:** *"La máquina encuentra indicios objetivos; el periodista investiga la historia."*
 
 ---
