@@ -31,19 +31,21 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
-# 3. Iniciar la aplicación
-streamlit run app.py
+# 3. Iniciar la aplicación Streamlit local (opcional)
+streamlit run streamlit_app.py
 ```
-La aplicación se abrirá automáticamente en tu navegador en `http://localhost:8501`.
+La aplicación local se abrirá en `http://localhost:8501`. La versión web para producción corre directamente en Vercel a través de `index.html`.
 
 ---
 
 ## 📂 Estructura del Proyecto
 
 ```text
-├── app.py                      # Aplicación Web principal (Streamlit)
+├── index.html                  # Aplicación Web principal (Vercel)
+├── streamlit_app.py            # Prototipo local en Streamlit
 ├── openarg_client.py           # Cliente Python nativo para OpenARG MCP
 ├── requirements.txt            # Dependencias del proyecto
+├── vercel.json                 # Configuración de despliegue en Vercel
 ├── CLAUDE.md                   # Guía de contexto para asistentes de IA (Claude / Cursor)
 ├── .mcp.json                   # Configuración del servidor MCP OpenARG
 ├── docs/
