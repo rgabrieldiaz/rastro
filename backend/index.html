@@ -43,7 +43,7 @@
         </div>
         <div>
           <span class="text-xl font-extrabold tracking-tight">RASTRO</span>
-          <span class="text-xs bg-slate-800 text-brand-500 font-mono px-2 py-0.5 rounded ml-2 border border-slate-700">BETA v0.2</span>
+          <span class="text-xs bg-slate-800 text-brand-500 font-mono px-2 py-0.5 rounded ml-2 border border-slate-700">BETA v0.3</span>
         </div>
       </div>
       <div class="flex items-center space-x-4">
@@ -67,31 +67,31 @@
           Auditoría de Integridad y Licitaciones
         </h1>
         <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
-          La máquina detecta indicios objetivos de concentración, plazos exprés y competencia simulada; el periodista investiga la historia y decide.
+          La máquina detecta indicios objetivos; el periodista verifica, aporta contexto humano y decide. Ningún indicio es una acusación sin verificación profesional.
         </p>
       </div>
 
       <!-- STATS BAR -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-6 border-t border-slate-800/80">
         <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-800">
-          <div class="text-slate-400 text-xs font-medium uppercase font-mono">Contratos Auditados</div>
+          <div class="text-slate-400 text-xs font-medium uppercase font-mono">Contratos en la Base</div>
           <div class="text-2xl font-bold text-white mt-1">107.441</div>
           <div class="text-xs text-emerald-400 mt-1">✓ Buenos Aires Compras</div>
         </div>
         <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-800">
-          <div class="text-slate-400 text-xs font-medium uppercase font-mono">Alertas de Concentración</div>
-          <div class="text-2xl font-bold text-amber-400 mt-1">14 activas</div>
-          <div class="text-xs text-slate-400 mt-1">Monto > $100M ARS</div>
+          <div class="text-slate-400 text-xs font-medium uppercase font-mono">Indicios en esta Demo</div>
+          <div class="text-2xl font-bold text-sky-400 mt-1">3 casos</div>
+          <div class="text-xs text-slate-400 mt-1">Anonimizados para demo</div>
         </div>
         <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-800">
-          <div class="text-slate-400 text-xs font-medium uppercase font-mono">Posibles Carteles</div>
-          <div class="text-2xl font-bold text-rose-400 mt-1">6 ternas</div>
-          <div class="text-xs text-slate-400 mt-1">Co-participación > 75%</div>
+          <div class="text-slate-400 text-xs font-medium uppercase font-mono">Aprobados por Periodista</div>
+          <div id="stat-aprobados" class="text-2xl font-bold text-emerald-400 mt-1">0</div>
+          <div class="text-xs text-slate-400 mt-1">Puerta humana activa</div>
         </div>
         <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-800">
-          <div class="text-slate-400 text-xs font-medium uppercase font-mono">Licitaciones Exprés</div>
-          <div class="text-2xl font-bold text-sky-400 mt-1">28 casos</div>
-          <div class="text-xs text-slate-400 mt-1">Plazo < 72 horas hábiles</div>
+          <div class="text-slate-400 text-xs font-medium uppercase font-mono">Descartados</div>
+          <div id="stat-descartados" class="text-2xl font-bold text-slate-400 mt-1">0</div>
+          <div class="text-xs text-slate-400 mt-1">Filtro de falsos positivos</div>
         </div>
       </div>
     </div>
@@ -101,8 +101,8 @@
   <div class="bg-white border-b border-slate-200 sticky top-16 z-40 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 flex space-x-8">
       <button onclick="switchTab('alertas')" id="tab-btn-alertas" class="py-4 px-1 border-b-2 border-brand-500 font-semibold text-brand-500 text-sm flex items-center space-x-2">
-        <span>🚨</span>
-        <span>Alertas Tempranas</span>
+        <span>📌</span>
+        <span>Indicios & Puerta Humana</span>
       </button>
       <button onclick="switchTab('ranking')" id="tab-btn-ranking" class="py-4 px-1 border-b-2 border-transparent font-medium text-slate-500 hover:text-slate-800 text-sm flex items-center space-x-2">
         <span>📊</span>
@@ -122,104 +122,120 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
 
-    <!-- TAB 1: FEED DE ALERTAS -->
+    <!-- TAB 1: FEED DE INDICIOS -->
     <section id="tab-alertas" class="space-y-6">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div>
-          <h2 class="text-xl font-bold text-slate-900">Señales de Alerta Activas</h2>
-          <p class="text-sm text-slate-500">Casos identificados por los algoritmos de detección sobre contrataciones públicas de CABA.</p>
-        </div>
-        <div class="flex items-center space-x-2">
-          <select class="text-sm border border-slate-300 rounded-lg px-3 py-1.5 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
-            <option>Filtrar: Todos los organismos</option>
-            <option>Ministerio de Salud</option>
-            <option>Ministerio de Espacio Público</option>
-            <option>Obras Viales</option>
-          </select>
+          <h2 class="text-xl font-bold text-slate-900">Indicios Detectados en Compras Públicas de CABA</h2>
+          <p class="text-sm text-slate-500">Demo con casos ilustrativos y anonimizados. Ningún indicio es una acusación: cada uno debe ser verificado por un periodista antes de publicarse.</p>
         </div>
       </div>
 
-      <!-- CARD 1 -->
-      <article class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow transition-all border-l-4 border-l-rose-500">
-        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-          <div class="flex items-center space-x-2">
-            <span class="bg-rose-100 text-rose-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">Alerta Colusión Recurrente</span>
-            <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">Concentración Salud</span>
-          </div>
-          <span class="text-xs text-slate-400 font-mono">Fuente: raw.caba__buenos_aires_compras</span>
-        </div>
-        <h3 class="text-lg font-bold text-slate-900 mb-2">
-          Droguería Comarsa S.A. — Co-participación sistemática con terna fija
-        </h3>
-        <p class="text-sm text-slate-600 leading-relaxed mb-4">
-          En <b>9.568 contratos adjudicados</b> en el sector salud (totalizando más de $3.4 billones de pesos), el sistema identificó que en el <b>78% de los concursos</b> compite de forma recurrente contra una misma terna de firmas distribuidoras con ofertas desestimadas por márgenes mínimos.
-        </p>
-        <div class="bg-slate-50 rounded-lg p-3 text-xs font-mono text-slate-700 flex flex-wrap gap-4 border border-slate-200">
-          <div><span class="text-slate-400">Organismo:</span> Ministerio de Salud CABA / Hospitales Públicos</div>
-          <div><span class="text-slate-400">Monto Acumulado:</span> $3.426.795 M ARS</div>
-          <div><span class="text-slate-400">Índice de Alerta:</span> <span class="font-bold text-rose-600">8.8 / 10</span></div>
-        </div>
-        <div class="mt-4 flex items-center justify-between pt-3 border-t border-slate-100">
-          <button onclick="switchTab('copiloto')" class="text-xs font-semibold text-brand-600 hover:text-brand-500 flex items-center space-x-1">
-            <span>Analizar con el Copiloto de IA &rarr;</span>
-          </button>
-          <span class="text-xs text-slate-400">ID OCDS: ocid-bac-comarsa-2025</span>
-        </div>
-      </article>
-
-      <!-- CARD 2 -->
-      <article class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow transition-all border-l-4 border-l-sky-500">
-        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-          <div class="flex items-center space-x-2">
-            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">Alerta Plazo Exprés</span>
-            <span class="bg-purple-100 text-purple-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">Contratación Directa</span>
-          </div>
-          <span class="text-xs text-slate-400 font-mono">Fuente: BAC Contracts</span>
-        </div>
-        <h3 class="text-lg font-bold text-slate-900 mb-2">
-          Corporación para la Defensa del Sur S.A. — Apertura en menos de 48 horas
-        </h3>
-        <p class="text-sm text-slate-600 leading-relaxed mb-4">
-          60 contrataciones por un monto acumulado de <b>$222.347 millones</b>. Se detectaron <b>14 expedientes con una ventana de publicación inferior a 48 horas hábiles</b> entre la publicación del pliego y la apertura de sobres, con un único oferente presentado.
-        </p>
-        <div class="bg-slate-50 rounded-lg p-3 text-xs font-mono text-slate-700 flex flex-wrap gap-4 border border-slate-200">
-          <div><span class="text-slate-400">Organismo:</span> Ministerio de Espacio Público</div>
-          <div><span class="text-slate-400">Monto Acumulado:</span> $222.347 M ARS</div>
-          <div><span class="text-slate-400">Índice de Alerta:</span> <span class="font-bold text-sky-600">9.1 / 10</span></div>
-        </div>
-        <div class="mt-4 flex items-center justify-between pt-3 border-t border-slate-100">
-          <button onclick="switchTab('copiloto')" class="text-xs font-semibold text-brand-600 hover:text-brand-500 flex items-center space-x-1">
-            <span>Redactar Pedido de Acceso a Información &rarr;</span>
-          </button>
-          <span class="text-xs text-slate-400">ID OCDS: ocid-bac-defensasur-2025</span>
-        </div>
-      </article>
-
-      <!-- CARD 3 -->
+      <!-- CARD CASO A -->
       <article class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow transition-all border-l-4 border-l-amber-500">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
           <div class="flex items-center space-x-2">
-            <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">Vínculo Registral Cruzado</span>
-            <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">Obras Viales</span>
+            <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">INDICIO A VERIFICAR</span>
+            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">COMPETENCIA RECURRENTE</span>
           </div>
-          <span class="text-xs text-slate-400 font-mono">Fuente: Registro Proveedores BAC</span>
+          <span class="text-xs text-slate-400 font-mono">Fuente: raw.caba__buenos_aires_compras__d09720af__v2</span>
         </div>
         <h3 class="text-lg font-bold text-slate-900 mb-2">
-          Constructora Vial Norte S.A. & Servicios Urbanos Integrales SRL
+          Proveedor A — sector salud
         </h3>
         <p class="text-sm text-slate-600 leading-relaxed mb-4">
-          Dos firmas formalmente competidoras en licitaciones de pavimentación y bacheo comparten el mismo número de teléfono comercial registrado en la base de datos de proveedores y apoderados con vínculo societario cruzado.
+          <b>Patrón:</b> En la mayoría de sus concursos compite contra la misma terna de distribuidoras, que pierden por márgenes mínimos.
         </p>
         <div class="bg-slate-50 rounded-lg p-3 text-xs font-mono text-slate-700 flex flex-wrap gap-4 border border-slate-200">
-          <div><span class="text-slate-400">Organismo:</span> Dirección General de Obras Viales</div>
-          <div><span class="text-slate-400">Coincidencia:</span> Teléfono comercial & Apoderado común</div>
-          <div><span class="text-slate-400">Índice de Alerta:</span> <span class="font-bold text-amber-600">8.4 / 10</span></div>
+          <div><span class="text-slate-400">Regla:</span> Mismo grupo de oferentes en 3 o más procedimientos.</div>
+          <div><span class="text-slate-400">Organismo:</span> Ministerio de Salud CABA / Hospitales Públicos</div>
         </div>
-        <div class="mt-4 flex items-center justify-between pt-3 border-t border-slate-100">
-          <button onclick="switchTab('copiloto')" class="text-xs font-semibold text-brand-600 hover:text-brand-500 flex items-center space-x-1">
-            <span>Explorar red societaria &rarr;</span>
-          </button>
-          <span class="text-xs text-slate-400">ID OCDS: ocid-bac-vialnorte-2025</span>
+
+        <!-- PUERTA HUMANA -->
+        <div class="mt-4 pt-4 border-t border-slate-100 bg-slate-50/70 -mx-6 -mb-6 p-6 rounded-b-xl">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-700 font-mono">🧑‍⚖️ Puerta Humana — Decisión del periodista (Caso A)</span>
+            <span id="badge-estado-A" class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-slate-200 text-slate-700">Estado: Pendiente</span>
+          </div>
+          <div class="flex flex-wrap gap-2 mb-3">
+            <button onclick="setDecision('A', 'Pendiente')" id="btn-A-Pendiente" class="text-xs px-3 py-1.5 rounded-lg border font-medium bg-white border-slate-300 text-slate-700 hover:bg-slate-100">Pendiente</button>
+            <button onclick="setDecision('A', 'Aprobado')" id="btn-A-Aprobado" class="text-xs px-3 py-1.5 rounded-lg border font-medium bg-white border-slate-300 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300">✓ Aprobar indicio</button>
+            <button onclick="setDecision('A', 'Descartado')" id="btn-A-Descartado" class="text-xs px-3 py-1.5 rounded-lg border font-medium bg-white border-slate-300 text-slate-700 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300">✕ Descartar</button>
+          </div>
+          <input type="text" id="nota-A" oninput="saveNote('A')" placeholder="Nota de verificación del periodista (ej: Revisadas licitaciones 101/2025 y 104/2025 en BAC)..." class="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white text-slate-800 focus:ring-2 focus:ring-brand-500">
+          <p id="feedback-A" class="text-xs text-slate-500 mt-2">ℹ️ Pendiente: el Copiloto solo puede preparar solicitudes de acceso a la información.</p>
+        </div>
+      </article>
+
+      <!-- CARD CASO B -->
+      <article class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow transition-all border-l-4 border-l-sky-500">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div class="flex items-center space-x-2">
+            <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">INDICIO A VERIFICAR</span>
+            <span class="bg-purple-100 text-purple-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">PLAZO CORTO (&lt; 72H)</span>
+          </div>
+          <span class="text-xs text-slate-400 font-mono">Fuente: raw.caba__buenos_aires_compras__d09720af__v2</span>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 mb-2">
+          Proveedor B — servicios urbanos
+        </h3>
+        <p class="text-sm text-slate-600 leading-relaxed mb-4">
+          <b>Patrón:</b> Varios expedientes con menos de 48 horas hábiles entre la publicación y la apertura de sobres, con un solo oferente.
+        </p>
+        <div class="bg-slate-50 rounded-lg p-3 text-xs font-mono text-slate-700 flex flex-wrap gap-4 border border-slate-200">
+          <div><span class="text-slate-400">Regla:</span> Menos de 3 días hábiles entre convocatoria y apertura.</div>
+          <div><span class="text-slate-400">Organismo:</span> Ministerio de Espacio Público CABA</div>
+        </div>
+
+        <!-- PUERTA HUMANA -->
+        <div class="mt-4 pt-4 border-t border-slate-100 bg-slate-50/70 -mx-6 -mb-6 p-6 rounded-b-xl">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-700 font-mono">🧑‍⚖️ Puerta Humana — Decisión del periodista (Caso B)</span>
+            <span id="badge-estado-B" class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-slate-200 text-slate-700">Estado: Pendiente</span>
+          </div>
+          <div class="flex flex-wrap gap-2 mb-3">
+            <button onclick="setDecision('B', 'Pendiente')" id="btn-B-Pendiente" class="text-xs px-3 py-1.5 rounded-lg border font-medium bg-white border-slate-300 text-slate-700 hover:bg-slate-100">Pendiente</button>
+            <button onclick="setDecision('B', 'Aprobado')" id="btn-B-Aprobado" class="text-xs px-3 py-1.5 rounded-lg border font-medium bg-white border-slate-300 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300">✓ Aprobar indicio</button>
+            <button onclick="setDecision('B', 'Descartado')" id="btn-B-Descartado" class="text-xs px-3 py-1.5 rounded-lg border font-medium bg-white border-slate-300 text-slate-700 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300">✕ Descartar</button>
+          </div>
+          <input type="text" id="nota-B" oninput="saveNote('B')" placeholder="Nota de verificación del periodista (ej: Verificados 14 expedientes en el Boletín Oficial)..." class="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white text-slate-800 focus:ring-2 focus:ring-brand-500">
+          <p id="feedback-B" class="text-xs text-slate-500 mt-2">ℹ️ Pendiente: el Copiloto solo puede preparar solicitudes de acceso a la información.</p>
+        </div>
+      </article>
+
+      <!-- CARD CASO C -->
+      <article class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow transition-all border-l-4 border-l-rose-500">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div class="flex items-center space-x-2">
+            <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">INDICIO A VERIFICAR</span>
+            <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">DATOS DE CONTACTO COMPARTIDOS</span>
+          </div>
+          <span class="text-xs text-slate-400 font-mono">Fuente: Registro de Proveedores BAC</span>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 mb-2">
+          Proveedores C y D — obra vial
+        </h3>
+        <p class="text-sm text-slate-600 leading-relaxed mb-4">
+          <b>Patrón:</b> Dos empresas que compiten entre sí en licitaciones de pavimentación comparten teléfono comercial en el registro de proveedores.
+        </p>
+        <div class="bg-slate-50 rounded-lg p-3 text-xs font-mono text-slate-700 flex flex-wrap gap-4 border border-slate-200">
+          <div><span class="text-slate-400">Regla:</span> Oferentes con domicilio, teléfono o apoderado en común.</div>
+          <div><span class="text-slate-400">Organismo:</span> Dirección General de Obras Viales</div>
+        </div>
+
+        <!-- PUERTA HUMANA -->
+        <div class="mt-4 pt-4 border-t border-slate-100 bg-slate-50/70 -mx-6 -mb-6 p-6 rounded-b-xl">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-700 font-mono">🧑‍⚖️ Puerta Humana — Decisión del periodista (Caso C)</span>
+            <span id="badge-estado-C" class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-slate-200 text-slate-700">Estado: Pendiente</span>
+          </div>
+          <div class="flex flex-wrap gap-2 mb-3">
+            <button onclick="setDecision('C', 'Pendiente')" id="btn-C-Pendiente" class="text-xs px-3 py-1.5 rounded-lg border font-medium bg-white border-slate-300 text-slate-700 hover:bg-slate-100">Pendiente</button>
+            <button onclick="setDecision('C', 'Aprobado')" id="btn-C-Aprobado" class="text-xs px-3 py-1.5 rounded-lg border font-medium bg-white border-slate-300 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300">✓ Aprobar indicio</button>
+            <button onclick="setDecision('C', 'Descartado')" id="btn-C-Descartado" class="text-xs px-3 py-1.5 rounded-lg border font-medium bg-white border-slate-300 text-slate-700 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300">✕ Descartar</button>
+          </div>
+          <input type="text" id="nota-C" oninput="saveNote('C')" placeholder="Nota de verificación del periodista (ej: Constatado en IGJ y llamadas a la sede)..." class="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white text-slate-800 focus:ring-2 focus:ring-brand-500">
+          <p id="feedback-C" class="text-xs text-slate-500 mt-2">ℹ️ Pendiente: el Copiloto solo puede preparar solicitudes de acceso a la información.</p>
         </div>
       </article>
     </section>
@@ -227,8 +243,8 @@
     <!-- TAB 2: RANKING -->
     <section id="tab-ranking" class="hidden space-y-6">
       <div>
-        <h2 class="text-xl font-bold text-slate-900">Mayores Contratistas de CABA</h2>
-        <p class="text-sm text-slate-500">Calculado directamente en el servidor de OpenARG sobre 107.441 filas de compras públicas.</p>
+        <h2 class="text-xl font-bold text-slate-900">Ranking de Contratistas con Mayor Volumen de Adjudicación</h2>
+        <p class="text-sm text-slate-500">Agregación de 107.441 filas en OpenARG. El volumen de contratos por sí solo no es un indicio de irregularidad.</p>
       </div>
 
       <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
@@ -241,8 +257,8 @@
             <tr>
               <th class="px-6 py-3 text-left font-semibold">Contratista</th>
               <th class="px-6 py-3 text-right font-semibold">Monto Total ($ ARS)</th>
-              <th class="px-6 py-3 text-right font-semibold">Contratos</th>
-              <th class="px-6 py-3 text-center font-semibold">Riesgo / Alerta</th>
+              <th class="px-6 py-3 text-right font-semibold">Contratos Ganados</th>
+              <th class="px-6 py-3 text-center font-semibold">Contexto</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-200 text-slate-700">
@@ -250,31 +266,31 @@
               <td class="px-6 py-4 font-semibold text-slate-900">DROGUERIA COMARSA S.A.</td>
               <td class="px-6 py-4 text-right font-mono">$3.426.795 M</td>
               <td class="px-6 py-4 text-right font-mono">9.568</td>
-              <td class="px-6 py-4 text-center"><span class="bg-rose-100 text-rose-800 text-xs px-2 py-0.5 rounded font-mono font-bold">ALTA (8.8)</span></td>
+              <td class="px-6 py-4 text-center"><span class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded font-mono">Salud Pública</span></td>
             </tr>
             <tr>
               <td class="px-6 py-4 font-semibold text-slate-900">DROGUERIA VARADERO S.A.</td>
               <td class="px-6 py-4 text-right font-mono">$1.072.175 M</td>
               <td class="px-6 py-4 text-right font-mono">3.401</td>
-              <td class="px-6 py-4 text-center"><span class="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded font-mono font-bold">MEDIA (6.5)</span></td>
+              <td class="px-6 py-4 text-center"><span class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded font-mono">Insumos Hospitalarios</span></td>
             </tr>
             <tr>
               <td class="px-6 py-4 font-semibold text-slate-900">REDIMER S.A.</td>
               <td class="px-6 py-4 text-right font-mono">$440.479 M</td>
               <td class="px-6 py-4 text-right font-mono">184</td>
-              <td class="px-6 py-4 text-center"><span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded font-mono font-bold">BAJA (3.2)</span></td>
+              <td class="px-6 py-4 text-center"><span class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded font-mono">Equipamiento Médico</span></td>
             </tr>
             <tr>
               <td class="px-6 py-4 font-semibold text-slate-900">MEDI SISTEM S.R.L.</td>
               <td class="px-6 py-4 text-right font-mono">$297.599 M</td>
               <td class="px-6 py-4 text-right font-mono">3.770</td>
-              <td class="px-6 py-4 text-center"><span class="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded font-mono font-bold">MEDIA (5.9)</span></td>
+              <td class="px-6 py-4 text-center"><span class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded font-mono">Farmacia & Diagnóstico</span></td>
             </tr>
             <tr>
               <td class="px-6 py-4 font-semibold text-slate-900">CORPORACION PARA LA DEFENSA DEL SUR S.A.</td>
               <td class="px-6 py-4 text-right font-mono">$222.347 M</td>
               <td class="px-6 py-4 text-right font-mono">60</td>
-              <td class="px-6 py-4 text-center"><span class="bg-rose-100 text-rose-800 text-xs px-2 py-0.5 rounded font-mono font-bold">ALTA (9.1)</span></td>
+              <td class="px-6 py-4 text-center"><span class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded font-mono">Servicios Urbanos</span></td>
             </tr>
           </tbody>
         </table>
@@ -284,33 +300,38 @@
     <!-- TAB 3: COPILOTO AGÉNTICO -->
     <section id="tab-copiloto" class="hidden space-y-6">
       <div>
-        <h2 class="text-xl font-bold text-slate-900">Copiloto Agéntico para el Periodista</h2>
-        <p class="text-sm text-slate-500">El asistente genera automáticamente la hipótesis de investigación y el borrador legal para solicitar información oficial.</p>
+        <h2 class="text-xl font-bold text-slate-900">Copiloto Agéntico con Barrera Ética</h2>
+        <p class="text-sm text-slate-500">El asistente solo genera fichas e hipótesis sobre indicios aprobados por el periodista. Para indicios pendientes, solo prepara pedidos de acceso a la información.</p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-          <label class="block text-sm font-semibold text-slate-800">Seleccionar Caso de Investigación:</label>
-          <select id="casoSelect" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm bg-white focus:ring-2 focus:ring-brand-500">
-            <option value="defensa">Corporación para la Defensa del Sur S.A. (Plazos < 48h)</option>
-            <option value="comarsa">Droguería Comarsa S.A. (Colusión recurrente)</option>
-            <option value="vial">Constructora Vial Norte S.A. (Teléfono compartido)</option>
+          <label class="block text-sm font-semibold text-slate-800">Seleccionar Caso para Profundizar:</label>
+          <select id="casoSelect" onchange="updateCopilotoState()" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm bg-white focus:ring-2 focus:ring-brand-500">
+            <option value="A">Proveedor A — sector salud</option>
+            <option value="B">Proveedor B — servicios urbanos</option>
+            <option value="C">Proveedores C y D — obra vial</option>
           </select>
 
-          <label class="block text-sm font-semibold text-slate-800 pt-2">Acción Requerida al Agente:</label>
+          <div class="flex items-center space-x-2 text-xs">
+            <span class="text-slate-500 font-medium">Estado actual de la verificación:</span>
+            <span id="copiloto-estado-badge" class="font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-800 font-mono">Pendiente</span>
+          </div>
+
+          <label class="block text-sm font-semibold text-slate-800 pt-2">¿Qué querés que prepare el Agente?</label>
           <div class="space-y-2 text-sm text-slate-700">
-            <label class="flex items-center space-x-2">
+            <label class="flex items-center space-x-2 cursor-pointer">
               <input type="radio" name="agentAction" value="foia" checked class="text-brand-500">
-              <span>Redactar Pedido de Acceso a la Información (Ley 27.275)</span>
+              <span>⚖️ Redactar Pedido de Acceso a la Información (Ley 104 / 27.275)</span>
             </label>
-            <label class="flex items-center space-x-2">
-              <input type="radio" name="agentAction" value="memo" class="text-brand-500">
-              <span>Resumen ejecutivo y preguntas para fuentes</span>
+            <label class="flex items-center space-x-2 cursor-pointer">
+              <input type="radio" name="agentAction" value="ficha" class="text-brand-500">
+              <span>📋 Ficha de Investigación y preguntas de réplica</span>
             </label>
           </div>
 
           <button onclick="runAgent()" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-semibold py-2.5 rounded-lg shadow transition-colors text-sm">
-            🤖 Generar Documento de Investigación
+            🤖 Ejecutar Agente de Auditoría
           </button>
         </div>
 
@@ -319,21 +340,11 @@
             <span class="text-xs font-mono font-bold text-slate-500 uppercase">Documento Generado por el Agente</span>
             <button onclick="copyDoc()" class="text-xs text-brand-600 hover:underline">Copiar texto</button>
           </div>
+          <div id="agentWarning" class="hidden mb-3 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-xs leading-relaxed">
+            🔒 <b>Indicio no aprobado:</b> Rastro no genera fichas ni hipótesis publicables sin verificación humana previa. Aprobalo primero en la pestaña de indicios o pedí información pública oficial.
+          </div>
           <textarea id="agentOutput" readonly class="w-full flex-1 bg-slate-50 font-mono text-xs text-slate-800 p-3 rounded-lg border border-slate-200 focus:outline-none resize-none min-h-[260px]">
-A la Dirección General de Compras y Contrataciones del GCBA:
-
-REF: Solicitud de Información Pública en los términos de la Ley 104 de CABA / Ley Nacional 27.275.
-
-Por medio de la presente, en mi carácter de periodista, solicito se me brinde acceso a la siguiente información respecto a las contrataciones adjudicadas a la firma CORPORACIÓN PARA LA DEFENSA DEL SUR S.A.:
-
-1. Copia digital íntegra de los pliegos de bases y condiciones y actas de apertura de ofertas de los expedientes licitatorios del período 2024-2026.
-2. Detalle de los días hábiles otorgados entre la fecha de publicación en el Boletín Oficial y la fecha límite de presentación de ofertas en los 14 concursos con plazo inferior a 72 horas.
-3. Informar si se presentaron observaciones o impugnaciones por parte de otros potenciales oferentes respecto a los plazos establecidos.
-
-Fundamento el presente pedido en el derecho a la información pública, la transparencia activa y el control cívico de los fondos públicos.
-
-Quedo a la espera de su respuesta dentro del plazo legal de 15 días hábiles.
-Atentamente.
+Elija una acción y presione "Ejecutar Agente de Auditoría".
           </textarea>
         </div>
       </div>
@@ -342,22 +353,49 @@ Atentamente.
     <!-- TAB 4: MODO CÍVICO -->
     <section id="tab-civico" class="hidden space-y-6">
       <div>
-        <h2 class="text-xl font-bold text-slate-900">Modo Cívico: El Futuro para el Ciudadano</h2>
-        <p class="text-sm text-slate-500">Cómo Rastro escala de una herramienta B2B de redacción a un portal público para que cualquier vecino consulte obras en su comunidad.</p>
+        <h2 class="text-xl font-bold text-slate-900">Modo Cívico: Abierto y Gratuito para Todo Público</h2>
+        <p class="text-sm text-slate-500">Rastro es una herramienta abierta: cualquier persona puede consultar cómo gasta su municipio o su ciudad.</p>
       </div>
 
-      <div class="bg-gradient-to-br from-brand-950 to-brand-900 text-white p-8 rounded-2xl shadow-lg border border-slate-800">
-        <div class="max-w-2xl">
-          <span class="bg-brand-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider font-mono">Fase 2: Audiencias</span>
-          <h3 class="text-2xl font-bold mt-4 mb-2">Traduciendo datos áridos a historias que le importan a la gente</h3>
-          <p class="text-slate-300 text-sm leading-relaxed mb-6">
-            En lugar de tablas de licitaciones ininteligibles, el ciudadano escribe: <i>«¿Qué obras de bacheo o escuelas se licitaron en mi comuna y quiénes ganaron?»</i>. El agente responde con Story Cards visuales y mapas interactivos.
-          </p>
-          <div class="bg-white/10 backdrop-blur p-4 rounded-xl border border-white/10 text-xs font-mono text-slate-200">
-            ✓ Escalabilidad regional (Argentina & México)<br>
-            ✓ Modelo B2B para medios independientes<br>
-            ✓ Fast-Track al Media Party Investment Club
-          </div>
+      <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
+        <div class="p-4 bg-brand-50/60 rounded-xl border border-brand-100 text-slate-700 text-sm leading-relaxed">
+          <p class="font-medium text-brand-950 mb-1">Cualquier vecino o periodista local puede consultar:</p>
+          <blockquote class="italic text-brand-600 border-l-2 border-brand-500 pl-3 my-2">
+            «¿Qué obras de bacheo o escuelas se licitaron en mi comuna este año y quiénes las ganaron?»
+          </blockquote>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-slate-200 text-sm">
+            <thead class="bg-slate-50 text-slate-500 font-mono text-xs uppercase">
+              <tr>
+                <th class="px-4 py-3 text-left font-semibold">Nivel</th>
+                <th class="px-4 py-3 text-left font-semibold">Quién</th>
+                <th class="px-4 py-3 text-left font-semibold">Qué puede hacer</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 text-slate-700">
+              <tr>
+                <td class="px-4 py-3 font-semibold text-slate-900">Abierto</td>
+                <td class="px-4 py-3 text-slate-600">Cualquier persona</td>
+                <td class="px-4 py-3">Consultar contratos y ver indicios con la regla y el documento que los respaldan.</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 font-semibold text-slate-900">Verificación</td>
+                <td class="px-4 py-3 text-slate-600">Periodistas, organizaciones y comunidad acreditada</td>
+                <td class="px-4 py-3">Aprobar o descartar indicios, agregar notas de campo y generar fichas investigativas.</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 font-semibold text-slate-900">Institucional</td>
+                <td class="px-4 py-3 text-slate-600">Medios, OSC, órganos de control</td>
+                <td class="px-4 py-3">Monitoreo continuo, alertas tempranas automatizadas y conexión por API.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-xs text-emerald-900 leading-relaxed font-medium">
+          💡 <b>Los indicios son públicos; las historias solo salen con verificación humana.</b> Código abierto, sostenido con fondos, servicios institucionales y membresías comunitarias.
         </div>
       </div>
     </section>
@@ -371,6 +409,96 @@ Atentamente.
   </footer>
 
   <script>
+    const CASOS_DATA = {
+      'A': {
+        nombre: 'Proveedor A — sector salud',
+        patron: 'En la mayoría de sus concursos compite contra la misma terna de distribuidoras, que pierden por márgenes mínimos.',
+        regla: 'Competencia recurrente: mismo grupo de oferentes en 3 o más procedimientos.',
+        organismo: 'Ministerio de Salud CABA / Hospitales Públicos',
+        fuente: 'raw.caba__buenos_aires_compras__d09720af__v2'
+      },
+      'B': {
+        nombre: 'Proveedor B — servicios urbanos',
+        patron: 'Varios expedientes con menos de 48 horas hábiles entre la publicación y la apertura de sobres, con un solo oferente.',
+        regla: 'Plazo corto: menos de 3 días hábiles entre convocatoria y apertura.',
+        organismo: 'Ministerio de Espacio Público CABA',
+        fuente: 'raw.caba__buenos_aires_compras__d09720af__v2'
+      },
+      'C': {
+        nombre: 'Proveedores C y D — obra vial',
+        patron: 'Dos empresas que compiten entre sí en licitaciones de pavimentación comparten teléfono comercial en el registro de proveedores.',
+        regla: 'Vínculo registral: oferentes del mismo procedimiento con domicilio, teléfono o apoderado en común.',
+        organismo: 'Dirección General de Obras Viales',
+        fuente: 'Registro de Proveedores BAC'
+      }
+    };
+
+    const decisiones = {
+      'A': { estado: 'Pendiente', nota: '' },
+      'B': { estado: 'Pendiente', nota: '' },
+      'C': { estado: 'Pendiente', nota: '' }
+    };
+
+    function setDecision(id, nuevoEstado) {
+      decisiones[id].estado = nuevoEstado;
+      
+      const badge = document.getElementById('badge-estado-' + id);
+      const feedback = document.getElementById('feedback-' + id);
+      
+      ['Pendiente', 'Aprobado', 'Descartado'].forEach(st => {
+        const btn = document.getElementById(`btn-${id}-${st}`);
+        btn.classList.remove('bg-emerald-600', 'bg-rose-600', 'bg-slate-700', 'text-white');
+      });
+
+      if (nuevoEstado === 'Aprobado') {
+        badge.className = 'text-xs px-2.5 py-0.5 rounded-full font-semibold bg-emerald-100 text-emerald-800';
+        badge.innerText = 'Estado: Aprobado por periodista';
+        feedback.innerText = '✅ Aprobado: ya se puede generar la ficha de investigación en el Copiloto.';
+        feedback.className = 'text-xs text-emerald-600 mt-2 font-medium';
+        document.getElementById(`btn-${id}-Aprobado`).classList.add('bg-emerald-600', 'text-white');
+      } else if (nuevoEstado === 'Descartado') {
+        badge.className = 'text-xs px-2.5 py-0.5 rounded-full font-semibold bg-rose-100 text-rose-800';
+        badge.innerText = 'Estado: Descartado';
+        feedback.innerText = '✕ Descartado: el Copiloto no generará fichas para este caso.';
+        feedback.className = 'text-xs text-rose-600 mt-2 font-medium';
+        document.getElementById(`btn-${id}-Descartado`).classList.add('bg-rose-600', 'text-white');
+      } else {
+        badge.className = 'text-xs px-2.5 py-0.5 rounded-full font-semibold bg-slate-200 text-slate-700';
+        badge.innerText = 'Estado: Pendiente';
+        feedback.innerText = 'ℹ️ Pendiente: el Copiloto solo puede preparar solicitudes de acceso a la información.';
+        feedback.className = 'text-xs text-slate-500 mt-2';
+        document.getElementById(`btn-${id}-Pendiente`).classList.add('bg-slate-700', 'text-white');
+      }
+
+      updateStats();
+      updateCopilotoState();
+    }
+
+    function saveNote(id) {
+      decisiones[id].nota = document.getElementById('nota-' + id).value;
+    }
+
+    function updateStats() {
+      const aprobados = Object.values(decisiones).filter(d => d.estado === 'Aprobado').length;
+      const descartados = Object.values(decisiones).filter(d => d.estado === 'Descartado').length;
+      document.getElementById('stat-aprobados').innerText = aprobados;
+      document.getElementById('stat-descartados').innerText = descartados;
+    }
+
+    function updateCopilotoState() {
+      const casoId = document.getElementById('casoSelect').value;
+      const est = decisiones[casoId].estado;
+      const badge = document.getElementById('copiloto-estado-badge');
+      badge.innerText = est;
+      if (est === 'Aprobado') {
+        badge.className = 'font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-mono';
+      } else if (est === 'Descartado') {
+        badge.className = 'font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-mono';
+      } else {
+        badge.className = 'font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-800 font-mono';
+      }
+    }
+
     function switchTab(tabName) {
       ['alertas', 'ranking', 'copiloto', 'civico'].forEach(t => {
         document.getElementById('tab-' + t).classList.add('hidden');
@@ -387,6 +515,9 @@ Atentamente.
       if (tabName === 'ranking' && !window.chartRendered) {
         renderChart();
         window.chartRendered = true;
+      }
+      if (tabName === 'copiloto') {
+        updateCopilotoState();
       }
     }
 
@@ -419,12 +550,25 @@ Atentamente.
     }
 
     function runAgent() {
-      const select = document.getElementById('casoSelect').value;
+      const casoId = document.getElementById('casoSelect').value;
+      const caso = CASOS_DATA[casoId];
+      const decision = decisiones[casoId];
+      const accion = document.querySelector('input[name="agentAction"]:checked').value;
       const out = document.getElementById('agentOutput');
-      if (select === 'comarsa') {
-        out.value = `INFORME DE AUDITORÍA AGÉNTICA:\nCaso: DROGUERÍA COMARSA S.A.\n\nPatrón: En el 78% de los concursos auditados en el Ministerio de Salud, se presentaron los mismos 3 competidores con ofertas marginalmente superiores.\n\nRecomendación de reporte:\n1. Solicitar el libro de actas de apertura de las licitaciones N° 101/2025 y 104/2025.\n2. Cotejar nómina de accionistas en el Boletín Oficial.\n\nPregunta sugerida para el vocero oficial: "¿Cuál fue el criterio técnico para no declarar desierta la licitación ante la falta de concurrencia de otros proveedores del mercado farmacéutico?"`;
+      const warning = document.getElementById('agentWarning');
+
+      if (accion === 'foia') {
+        warning.classList.add('hidden');
+        out.value = `A la Dirección General de Compras y Contrataciones del GCBA:\n\nREF: Solicitud de Información Pública en los términos de la Ley 104 de CABA / Ley Nacional 27.275.\n\nPor medio de la presente, en mi carácter de periodista, solicito se me brinde acceso a la siguiente información respecto a las contrataciones adjudicadas a ${caso.nombre}:\n\n1. Copia digital íntegra de los pliegos de bases y condiciones y actas de apertura de ofertas de los expedientes licitatorios del período 2024-2026.\n2. Detalle de los días hábiles otorgados entre la fecha de publicación en el Boletín Oficial y la fecha límite de presentación de ofertas en los concursos con plazo inferior a 72 horas.\n3. Informar si se presentaron observaciones o impugnaciones por parte de otros potenciales oferentes respecto a los plazos establecidos.\n\nFundamento el presente pedido en el derecho a la información pública, la transparencia activa y el control cívico de los fondos públicos.\n\nQuedo a la espera de su respuesta dentro del plazo legal de 15 días hábiles.\nAtentamente.`;
       } else {
-        out.value = `A la Dirección General de Compras y Contrataciones del GCBA:\n\nREF: Solicitud de Información Pública en los términos de la Ley 104 de CABA / Ley Nacional 27.275.\n\nPor medio de la presente, solicito copia íntegra de los expedientes licitatorios de CORPORACIÓN PARA LA DEFENSA DEL SUR S.A. que contaron con plazos de publicación inferiores a 72 horas hábiles durante el ejercicio 2025-2026.\n\nAtentamente,\nEquipo de Investigación Rastro.`;
+        if (decision.estado !== 'Aprobado') {
+          warning.classList.remove('hidden');
+          out.value = `[ACCESO DENEGADO POR REGLA ÉTICA]\n\n🔒 El indicio seleccionado (${caso.nombre}) se encuentra en estado "${decision.estado}".\n\nRastro implementa una barrera ética estricta: la inteligencia artificial no genera hipótesis publicables ni fichas de acusación sin la aprobación previa de un periodista acreditado.\n\nPara desbloquear la ficha:\n1. Diríjase a la pestaña "Indicios & Puerta Humana".\n2. Realice la verificación previa y haga clic en "✓ Aprobar indicio".\n3. Agregue una nota de verificación metodológica.`;
+        } else {
+          warning.classList.add('hidden');
+          const nota = decision.nota ? decision.nota : 'Verificación documental completada sin notas adicionales.';
+          out.value = `📋 FICHA DE INVESTIGACIÓN VERIFICADA POR PERIODISTA\n\nCaso: ${caso.nombre}\nEstado: APROBADO POR PERIODISTA\nOrganismo: ${caso.organismo}\n\n• PATRÓN DETECTADO: ${caso.patron}\n• REGLA TÉCNICA: ${caso.regla}\n• NOTA DEL PERIODISTA: ${nota}\n\n• SIGUIENTE PASO METODOLÓGICO OBLIGATORIO:\nPedir la versión de las empresas y del organismo contratante (derecho de réplica y debido proceso) antes de cualquier publicación.\n\n• FUENTE DE DATOS PÚBLICOS:\nDataset oficial OpenARG: ${caso.fuente}`;
+        }
       }
     }
 
