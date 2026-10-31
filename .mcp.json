@@ -3,7 +3,7 @@
     "openarg": {
       "url": "https://mcp.openarg.org/mcp",
       "headers": {
-        "Authorization": "Bearer oarg_sk_-JNt3Q9bMxIaFSlzxZn-KsiVFWXKEePolIbHZOUHXrs"
+        "Authorization": "Bearer ${OPENARG_API_KEY}"
       }
     }
   }

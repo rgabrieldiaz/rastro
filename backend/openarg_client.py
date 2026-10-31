@@ -24,7 +24,7 @@ if env_path.exists():
                 k, v = line.split("=", 1)
                 os.environ.setdefault(k.strip(), v.strip())
 
-OPENARG_API_KEY = os.getenv("OPENARG_API_KEY", "oarg_sk_-JNt3Q9bMxIaFSlzxZn-KsiVFWXKEePolIbHZOUHXrs")
+OPENARG_API_KEY = os.getenv("OPENARG_API_KEY", "")
 OPENARG_MCP_URL = os.getenv("OPENARG_MCP_URL", "https://mcp.openarg.org/mcp")
 
 
@@ -32,7 +32,7 @@ class OpenArgClient:
     def __init__(self, api_key: Optional[str] = None, url: Optional[str] = None):
         self.api_key = api_key or OPENARG_API_KEY
         self.url = url or OPENARG_MCP_URL
-        self.ctx = ssl._create_unverified_context()
+        self.ctx = ssl.create_default_context()
         self._req_id = 0
 
     def _call_tool(self, name: str, arguments: Dict[str, Any]) -> str:

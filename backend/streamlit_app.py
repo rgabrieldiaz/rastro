@@ -89,8 +89,8 @@ with st.sidebar:
     st.markdown("### ⚙️ Filtros de Auditoría")
     tipo_alerta = st.multiselect(
         "Tipo de Alertas a monitorear:",
-        ["Concentración de Contratos", "Competencia Simulada (Carteles)", "Plazos Exprés (< 72h)"],
-        default=["Concentración de Contratos", "Competencia Simulada (Carteles)"]
+        ["Concentración de Contratos", "Competencia recurrente", "Plazos cortos (< 72h)", "Vínculos registrales"],
+        default=["Concentración de Contratos", "Competencia recurrente"]
     )
 
     st.divider()
@@ -111,70 +111,88 @@ tab1, tab2, tab3, tab4 = st.tabs([
 ])
 
 # ==============================================================================
-# TAB 1: FEED DE ALERTAS ACTIVAS
+# CASOS DE LA DEMO (ilustrativos, anonimizados)
+# ==============================================================================
+CASOS = [
+    {
+        "id": "A",
+        "nombre": "Proveedor A — sector salud",
+        "etiquetas": [("INDICIO A VERIFICAR", "badge-orange"), ("COMPETENCIA RECURRENTE", "badge-blue")],
+        "patron": "En la mayoría de sus concursos compite contra la misma terna de distribuidoras, que pierden por márgenes mínimos.",
+        "organismo": "Ministerio de Salud CABA / Hospitales Públicos",
+        "fuente": "raw.caba__buenos_aires_compras__d09720af__v2",
+        "regla": "Competencia recurrente: mismo grupo de oferentes en 3 o más procedimientos.",
+    },
+    {
+        "id": "B",
+        "nombre": "Proveedor B — servicios urbanos",
+        "etiquetas": [("INDICIO A VERIFICAR", "badge-orange"), ("PLAZO CORTO", "badge-blue")],
+        "patron": "Varios expedientes con menos de 48 horas hábiles entre la publicación y la apertura de sobres, con un solo oferente.",
+        "organismo": "Ministerio de Espacio Público CABA",
+        "fuente": "raw.caba__buenos_aires_compras__d09720af__v2",
+        "regla": "Plazo corto: menos de 3 días hábiles entre convocatoria y apertura.",
+    },
+    {
+        "id": "C",
+        "nombre": "Proveedores C y D — obra vial",
+        "etiquetas": [("INDICIO A VERIFICAR", "badge-orange"), ("DATOS DE CONTACTO COMPARTIDOS", "badge-blue")],
+        "patron": "Dos empresas que compiten entre sí en licitaciones de pavimentación comparten teléfono comercial en el registro de proveedores.",
+        "organismo": "Dirección General de Obras Viales",
+        "fuente": "Registro de Proveedores BAC",
+        "regla": "Vínculo registral: oferentes del mismo procedimiento con domicilio, teléfono o apoderado en común.",
+    },
+]
+ESTADOS = ["Pendiente", "Aprobado por periodista", "Descartado"]
+if "decisiones" not in st.session_state:
+    st.session_state.decisiones = {c['id']: {"estado": "Pendiente", "nota": ""} for c in CASOS}
+
+
+def estado_de(caso_id):
+    return st.session_state.decisiones[caso_id]["estado"]
+
+
+# ==============================================================================
+# TAB 1: FEED DE INDICIOS + PUERTA HUMANA
 # ==============================================================================
 with tab1:
-    st.markdown("### 📌 Alertas Detectadas en Compras Públicas de CABA")
-    st.caption("Procesamiento automatizado sobre 107.441 contrataciones oficiales indexadas en OpenARG.")
+    st.markdown("### 📌 Indicios detectados en compras públicas de CABA")
+    st.caption("Demo: casos ilustrativos y anonimizados. Ningún indicio es una acusación: cada uno debe ser verificado por un periodista antes de publicarse.")
 
+    aprobados = sum(1 for c in CASOS if estado_de(c['id']) == ESTADOS[1])
+    descartados = sum(1 for c in CASOS if estado_de(c['id']) == ESTADOS[2])
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Contratos Auditados", "107.441", "+500k históricos")
-    col2.metric("Alertas de Concentración", "14 activas", "Monto > $100M")
-    col3.metric("Posible Colusión / Cartel", "6 grupos", "Mismos 3 competidores")
-    col4.metric("Contrataciones Exprés", "28 expedientes", "Plazo < 3 días")
+    col1.metric("Contratos en la base", "107.441", "+500k históricos")
+    col2.metric("Indicios en esta demo", str(len(CASOS)))
+    col3.metric("Aprobados por periodista", str(aprobados))
+    col4.metric("Descartados", str(descartados))
 
     st.divider()
 
-    # Caso 1: Concentración y Co-participación
-    with st.container():
-        st.markdown("""
+    for c in CASOS:
+        etiquetas = " ".join(f'<span class="{cls}">{txt}</span>' for txt, cls in c['etiquetas'])
+        st.markdown(f"""
         <div class="alert-card">
-            <span class="badge-red">ALERTA COLUSIÓN RECURRENTE</span>
-            <span class="badge-orange">CONCENTRACIÓN DE RUBRO</span>
-            <h4 style="margin: 8px 0 4px 0; color: #0F172A;">Droguería Comarsa S.A. vs. Proveedores Recurrentes</h4>
-            <p style="color: #475569; font-size: 0.95rem; margin-bottom: 8px;">
-                <b>Patrón detectado:</b> En 9.568 contratos adjudicados en el sector salud (totalizando más de $3.4 billones de pesos), se detectó que en el <b>78% de los concursos</b> compite sistemáticamente contra una misma terna de firmas distribuidoras con ofertas descartadas por márgenes mínimos.
-            </p>
+            {etiquetas}
+            <h4 style="margin: 8px 0 4px 0; color: #0F172A;">{c['nombre']}</h4>
+            <p style="color: #475569; font-size: 0.95rem; margin-bottom: 8px;"><b>Patrón:</b> {c['patron']}</p>
             <p style="font-size: 0.85rem; color: #64748B;">
-                <b>Organismo principal:</b> Ministerio de Salud CABA / Hospitales Públicos &nbsp;|&nbsp; 
-                <b>Fuente Oficial OpenARG:</b> <code>raw.caba__buenos_aires_compras__d09720af__v2</code>
+                <b>Regla que lo disparó:</b> {c['regla']}<br>
+                <b>Organismo:</b> {c['organismo']} &nbsp;|&nbsp; <b>Fuente:</b> <code>{c['fuente']}</code>
             </p>
         </div>
         """, unsafe_allow_html=True)
 
-    # Caso 2: Plazos Exprés
-    with st.container():
-        st.markdown("""
-        <div class="alert-card">
-            <span class="badge-red">ALERTA PLAZO EXPRÉS</span>
-            <span class="badge-blue">CONTRATACIÓN DIRECTA</span>
-            <h4 style="margin: 8px 0 4px 0; color: #0F172A;">Corporación para la Defensa del Sur S.A. — Servicios Urbanos</h4>
-            <p style="color: #475569; font-size: 0.95rem; margin-bottom: 8px;">
-                <b>Patrón detectado:</b> 60 contrataciones por un monto acumulado de <b>$222.347 millones</b>. 14 de los expedientes tuvieron una ventana de publicación inferior a <b>48 horas hábiles</b> entre la publicación y la apertura de sobres, con único oferente presentado.
-            </p>
-            <p style="font-size: 0.85rem; color: #64748B;">
-                <b>Organismo principal:</b> Ministerio de Espacio Público CABA &nbsp;|&nbsp; 
-                <b>Fuente Oficial OpenARG:</b> <code>raw.caba__buenos_aires_compras__d09720af__v2</code>
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-
-    # Caso 3: Mismo Domicilio Fiscal
-    with st.container():
-        st.markdown("""
-        <div class="alert-card">
-            <span class="badge-orange">COINCIDENCIA DE DATOS DE CONTACTO</span>
-            <span class="badge-blue">OBRA PÚBLICA</span>
-            <h4 style="margin: 8px 0 4px 0; color: #0F172A;">Constructora Vial Norte S.A. & Servicios Urbanos Integrales SRL</h4>
-            <p style="color: #475569; font-size: 0.95rem; margin-bottom: 8px;">
-                <b>Patrón detectado:</b> Dos empresas formalmente competidoras en licitaciones de pavimentación comparten el mismo número de teléfono comercial registrado en la base de datos de proveedores y apoderados con vínculo societario cruzado.
-            </p>
-            <p style="font-size: 0.85rem; color: #64748B;">
-                <b>Organismo principal:</b> Dirección General de Obras Viales &nbsp;|&nbsp; 
-                <b>Fuente Oficial OpenARG:</b> Declaraciones Juradas y Registro de Proveedores BAC
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
+        with st.expander(f"🧑‍⚖️ Puerta humana — decisión del periodista sobre el caso {c['id']}", expanded=False):
+            d = st.session_state.decisiones[c['id']]
+            nuevo = st.radio("Estado", ESTADOS, index=ESTADOS.index(d['estado']), key=f"estado_{c['id']}", horizontal=True)
+            nota = st.text_area("Nota de verificación (qué se revisó, qué falta)", value=d['nota'], key=f"nota_{c['id']}")
+            st.session_state.decisiones[c['id']] = {"estado": nuevo, "nota": nota}
+            if nuevo == ESTADOS[1]:
+                st.success("Aprobado: ya se puede generar la ficha en el Copiloto.")
+            elif nuevo == ESTADOS[2]:
+                st.warning("Descartado: no se generará ninguna ficha.")
+            else:
+                st.info("Pendiente: el Copiloto solo puede preparar una solicitud de acceso a la información.")
 
 
 # ==============================================================================
@@ -182,7 +200,7 @@ with tab1:
 # ==============================================================================
 with tab2:
     st.markdown("### 📊 Ranking de Contratistas con Mayor Volumen de Adjudicación")
-    st.caption("Cálculo matemático directo en la base de OpenARG mediante agregación de 107.441 filas.")
+    st.caption("Agregación de 107.441 filas en OpenARG. El volumen de contratos por sí solo no es un indicio de irregularidad.")
 
     # Datos reales obtenidos de la herramienta agregar_datos de OpenARG
     data_ranking = {
@@ -201,7 +219,6 @@ with tab2:
             222347837340.00
         ],
         "Contratos Ganados": [9568, 3401, 184, 3770, 60],
-        "Índice de Alerta": ["Alta (8.8)", "Media (6.5)", "Baja (3.2)", "Media (5.9)", "Alta (9.1)"]
     }
     df = pd.DataFrame(data_ranking)
 
@@ -234,12 +251,10 @@ with tab3:
     with col_izq:
         proveedor_seleccionado = st.selectbox(
             "Seleccionar caso para profundizar:",
-            [
-                "Corporación para la Defensa del Sur S.A. (Plazos exprés)",
-                "Droguería Comarsa S.A. (Co-participación recurrente)",
-                "Constructora Vial Norte S.A. (Datos de contacto compartidos)"
-            ]
+            [c['nombre'] for c in CASOS]
         )
+        caso = next(c for c in CASOS if c['nombre'] == proveedor_seleccionado)
+        st.caption(f"Estado de la verificación: **{estado_de(caso['id'])}**")
 
         accion = st.radio(
             "¿Qué querés que prepare el Agente?",
@@ -263,10 +278,10 @@ with tab3:
 
 REF: Solicitud de Información Pública en los términos de la Ley 104 de CABA / Ley Nacional 27.275.
 
-Por medio de la presente, en mi carácter de periodista, solicito se me brinde acceso a la siguiente información respecto a las contrataciones adjudicadas a la firma CORPORACIÓN PARA LA DEFENSA DEL SUR S.A.:
+Por medio de la presente, en mi carácter de periodista, solicito se me brinde acceso a la siguiente información respecto a las contrataciones adjudicadas a {caso['nombre']}:
 
 1. Copia digital íntegra de los pliegos de bases y condiciones y actas de apertura de ofertas de los expedientes licitatorios del período 2024-2026.
-2. Detalle de los días hábiles otorgados entre la fecha de publicación en el Boletín Oficial y la fecha límite de presentación de ofertas en los 14 concursos con plazo inferior a 72 horas.
+2. Detalle de los días hábiles otorgados entre la fecha de publicación en el Boletín Oficial y la fecha límite de presentación de ofertas en los concursos con plazo inferior a 72 horas.
 3. Informar si se presentaron observaciones o impugnaciones por parte de otros potenciales oferentes respecto a los plazos establecidos.
 
 Fundamento el presente pedido en el derecho a la información pública, la transparencia activa y el control cívico de los fondos públicos.
@@ -275,28 +290,35 @@ Quedo a la espera de su respuesta dentro del plazo legal de 15 días hábiles.
 Atentamente.""",
                         height=320
                     )
+                elif estado_de(caso['id']) != ESTADOS[1]:
+                    st.warning("🔒 Este indicio todavía no fue aprobado por un periodista. Rastro no genera fichas ni hipótesis publicables sin verificación humana. Aprobalo en la pestaña de indicios o pedí primero la información pública.")
                 else:
-                    st.info(f"📋 Ficha de Investigación: {proveedor_seleccionado}")
-                    st.markdown("""
-                    - **Hipótesis periodística:** Posible esquema de contratación acelerada para evitar concurrencia de otros oferentes del mercado.
-                    - **Datos clave:** 14 de 60 contratos tuvieron llamados de menos de 3 días hábiles.
-                    - **Siguiente paso recomendado para el periodista:** Entrevistar a dos empresas del rubro de servicios urbanos para consultar si tuvieron conocimiento del llamado antes del cierre.
-                    - **Evidencia anexa:** 4 números de licitación extraídos de OpenARG BAC con sus correspondientes identificadores OCDS.
-                    """)
+                    nota = st.session_state.decisiones[caso['id']]["nota"] or "Sin nota."
+                    st.info(f"📋 Ficha verificada: {caso['nombre']}")
+                    st.markdown(f"""
+- **Patrón:** {caso['patron']}
+- **Regla:** {caso['regla']}
+- **Nota del periodista:** {nota}
+- **Siguiente paso:** pedir la versión de las empresas y del organismo (derecho de réplica) antes de publicar.
+- **Fuente:** `{caso['fuente']}`
+""")
         else:
             st.info("Elegí un caso y presioná **Ejecutar Agente de Auditoría** para ver al copiloto en acción.")
 
 
 # ==============================================================================
-# TAB 4: MODO CÍVICO / AUDIENCIAS (DE MENOS A MÁS)
+# TAB 4: MODO CÍVICO — ABIERTO A TODO PÚBLICO
 # ==============================================================================
 with tab4:
-    st.markdown("### 👥 Modo Cívico: El Futuro para el Ciudadano Común")
+    st.markdown("### 👥 Modo cívico: abierto y gratuito para todo público")
     st.markdown("""
-    En esta segunda fase, **Rastro** no solo ayudará a redacciones, sino que cualquier vecino podrá escribir:
+    **Rastro es una herramienta abierta**: cualquier persona puede consultar cómo gasta su municipio o su ciudad.
     > *«¿Qué obras de bacheo o escuelas se licitaron en mi comuna este año y quiénes las ganaron?»*
-    
-    El agente traducirá los datos de contrataciones a **Story Cards comprensibles** con mapas, fotos y montos explicados de forma clara, cerrando la brecha entre el periodismo de datos y la comunidad.
-    """)
 
-    st.success("💡 **Diferencial ante el Jurado:** Rastro arranca hoy como una herramienta B2B indispensable para redacciones locales y escala mañana a una plataforma cívica regional.")
+    | Nivel | Quién | Qué puede hacer |
+    |---|---|---|
+    | Abierto | Cualquier persona | Consultar contratos y ver indicios con la regla y el documento que los respaldan |
+    | Verificación | Periodistas, organizaciones y comunidad acreditada | Aprobar o descartar indicios y generar fichas |
+    | Institucional | Medios, OSC, órganos de control | Monitoreo, alertas y API |
+    """)
+    st.success("💡 **Los indicios son públicos; las historias solo salen con verificación humana.** Código abierto, sostenido con fondos, servicios institucionales y membresías comunitarias.")
