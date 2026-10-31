@@ -1,583 +1,1148 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RASTRO — Radar Agéntico de Integridad en Compras Públicas</title>
+  <title>Rastro — Radar de Integridad en Compras Públicas</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            sans: ['Inter', '-apple-system', 'sans-serif'],
             mono: ['"JetBrains Mono"', 'monospace'],
           },
           colors: {
-            brand: {
-              50: '#FFF7ED',
-              100: '#FFEDD5',
-              500: '#F58220',
-              600: '#EA580C',
-              900: '#0E263D',
-              950: '#081726',
+            radar: {
+              bg: '#0B132B',
+              sidebar: '#0A1024',
+              panel: '#111C38',
+              panel2: '#16234A',
+              card: '#0F1A36',
+              line: '#24335F',
+              lineLight: '#32457A',
+              amber: '#F58220',
+              amberHover: '#EA580C',
+              emerald: '#10B981',
+              text: '#E2E8F0',
+              muted: '#94A3B8',
             }
           }
         }
       }
     }
   </script>
+  <style>
+    :root {
+      --bg: #0B132B;
+      --panel: #111C38;
+      --panel2: #16234A;
+      --line: #24335F;
+      --amber: #F58220;
+      --emerald: #10B981;
+      --text: #E2E8F0;
+      --muted: #94A3B8;
+    }
+    body {
+      background-color: #0B132B;
+      background-image: radial-gradient(1200px 600px at 85% -10%, rgba(245, 130, 32, 0.08), transparent 60%);
+      color: #E2E8F0;
+      font-family: 'Inter', -apple-system, sans-serif;
+    }
+    .pulse-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55); }
+      70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    .tab-active {
+      background: #16234A !important;
+      color: #FFFFFF !important;
+      border-color: #F58220 !important;
+      border-bottom: 2px solid #F58220 !important;
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: #0A1024;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: #24335F;
+      border-radius: 3px;
+    }
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+<body class="h-full flex flex-col md:flex-row antialiased overflow-x-hidden">
 
-  <!-- NAVBAR -->
-  <header class="bg-brand-950 text-white border-b border-slate-800 sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-9 h-9 bg-brand-500 rounded-lg flex items-center justify-center font-bold text-white shadow-md">
-          R
-        </div>
-        <div>
-          <span class="text-xl font-extrabold tracking-tight">RASTRO</span>
-          <span class="text-xs bg-slate-800 text-brand-500 font-mono px-2 py-0.5 rounded ml-2 border border-slate-700">BETA v0.3</span>
-        </div>
+  <!-- SIDEBAR (Matching Gio's Streamlit Sidebar) -->
+  <aside class="w-full md:w-72 bg-[#0A1024] border-b md:border-b-0 md:border-r border-radar-line p-5 flex flex-col shrink-0 md:min-h-screen">
+    <!-- BRAND LOGO -->
+    <div class="flex items-center space-x-3 mb-6">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-radar-amber to-amber-600 flex items-center justify-center text-xl shadow-lg shadow-radar-amber/20">
+        🛰️
       </div>
-      <div class="flex items-center space-x-4">
-        <span class="hidden md:inline-flex text-xs text-slate-400 font-mono">
-          <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 mr-2 animate-pulse self-center"></span>
-          OpenARG MCP: 107.441 contrataciones
-        </span>
-        <span class="text-xs bg-brand-500/20 text-brand-500 border border-brand-500/30 px-3 py-1 rounded-full font-medium">
-          Media Party BA 2026
-        </span>
-      </div>
-    </div>
-  </header>
-
-  <!-- HERO SECTION -->
-  <section class="bg-brand-900 text-white py-10 px-4 border-b border-slate-800">
-    <div class="max-w-7xl mx-auto">
-      <div class="max-w-3xl">
-        <p class="text-brand-500 font-mono text-sm uppercase tracking-wider mb-2 font-semibold">// Radar Agéntico de Compras Públicas</p>
-        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3">
-          Auditoría de Integridad y Licitaciones
+      <div>
+        <h1 class="text-xl font-extrabold tracking-tight text-white flex items-center gap-1.5">
+          RASTRO <span class="w-2 h-2 rounded-full bg-radar-amber"></span>
         </h1>
-        <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
-          La máquina detecta indicios objetivos; el periodista verifica, aporta contexto humano y decide. Ningún indicio es una acusación sin verificación profesional.
-        </p>
-      </div>
-
-      <!-- STATS BAR -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-6 border-t border-slate-800/80">
-        <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-800">
-          <div class="text-slate-400 text-xs font-medium uppercase font-mono">Contratos en la Base</div>
-          <div class="text-2xl font-bold text-white mt-1">107.441</div>
-          <div class="text-xs text-emerald-400 mt-1">✓ Buenos Aires Compras</div>
-        </div>
-        <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-800">
-          <div class="text-slate-400 text-xs font-medium uppercase font-mono">Indicios en esta Demo</div>
-          <div class="text-2xl font-bold text-sky-400 mt-1">3 casos</div>
-          <div class="text-xs text-slate-400 mt-1">Anonimizados para demo</div>
-        </div>
-        <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-800">
-          <div class="text-slate-400 text-xs font-medium uppercase font-mono">Aprobados por Periodista</div>
-          <div id="stat-aprobados" class="text-2xl font-bold text-emerald-400 mt-1">0</div>
-          <div class="text-xs text-slate-400 mt-1">Puerta humana activa</div>
-        </div>
-        <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-800">
-          <div class="text-slate-400 text-xs font-medium uppercase font-mono">Descartados</div>
-          <div id="stat-descartados" class="text-2xl font-bold text-slate-400 mt-1">0</div>
-          <div class="text-xs text-slate-400 mt-1">Filtro de falsos positivos</div>
-        </div>
+        <p class="text-xs text-radar-muted font-medium">Radar de integridad en compras</p>
       </div>
     </div>
-  </section>
 
-  <!-- NAVIGATION TABS -->
-  <div class="bg-white border-b border-slate-200 sticky top-16 z-40 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 flex space-x-8">
-      <button onclick="switchTab('alertas')" id="tab-btn-alertas" class="py-4 px-1 border-b-2 border-brand-500 font-semibold text-brand-500 text-sm flex items-center space-x-2">
-        <span>📌</span>
-        <span>Indicios & Puerta Humana</span>
-      </button>
-      <button onclick="switchTab('ranking')" id="tab-btn-ranking" class="py-4 px-1 border-b-2 border-transparent font-medium text-slate-500 hover:text-slate-800 text-sm flex items-center space-x-2">
-        <span>📊</span>
-        <span>Ranking de Contratistas</span>
-      </button>
-      <button onclick="switchTab('copiloto')" id="tab-btn-copiloto" class="py-4 px-1 border-b-2 border-transparent font-medium text-slate-500 hover:text-slate-800 text-sm flex items-center space-x-2">
-        <span>🤖</span>
-        <span>Copiloto de Investigación (IA)</span>
-      </button>
-      <button onclick="switchTab('civico')" id="tab-btn-civico" class="py-4 px-1 border-b-2 border-transparent font-medium text-slate-500 hover:text-slate-800 text-sm flex items-center space-x-2">
-        <span>👥</span>
-        <span>Modo Cívico</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- MAIN CONTAINER -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
-
-    <!-- TAB 1: FEED DE INDICIOS -->
-    <section id="tab-alertas" class="space-y-6">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
-        <div>
-          <h2 class="text-xl font-bold text-slate-900">Indicios Detectados en Compras Públicas de CABA</h2>
-          <p class="text-sm text-slate-500">Demo con casos ilustrativos y anonimizados. Ningún indicio es una acusación: cada uno debe ser verificado por un periodista antes de publicarse.</p>
-        </div>
-      </div>
-
-      <!-- CARD CASO A -->
-      <article class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow transition-all border-l-4 border-l-amber-500">
-        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-          <div class="flex items-center space-x-2">
-            <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">INDICIO A VERIFICAR</span>
-            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">COMPETENCIA RECURRENTE</span>
-          </div>
-          <span class="text-xs text-slate-400 font-mono">Fuente: raw.caba__buenos_aires_compras__d09720af__v2</span>
-        </div>
-        <h3 class="text-lg font-bold text-slate-900 mb-2">
-          Proveedor A — sector salud
-        </h3>
-        <p class="text-sm text-slate-600 leading-relaxed mb-4">
-          <b>Patrón:</b> En la mayoría de sus concursos compite contra la misma terna de distribuidoras, que pierden por márgenes mínimos.
-        </p>
-        <div class="bg-slate-50 rounded-lg p-3 text-xs font-mono text-slate-700 flex flex-wrap gap-4 border border-slate-200">
-          <div><span class="text-slate-400">Regla:</span> Mismo grupo de oferentes en 3 o más procedimientos.</div>
-          <div><span class="text-slate-400">Organismo:</span> Ministerio de Salud CABA / Hospitales Públicos</div>
-        </div>
-
-        <!-- PUERTA HUMANA -->
-        <div class="mt-4 pt-4 border-t border-slate-100 bg-slate-50/70 -mx-6 -mb-6 p-6 rounded-b-xl">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-700 font-mono">🧑‍⚖️ Puerta Humana — Decisión del periodista (Caso A)</span>
-            <span id="badge-estado-A" class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-slate-200 text-slate-700">Estado: Pendiente</span>
-          </div>
-          <div class="flex flex-wrap gap-2 mb-3">
-            <button onclick="setDecision('A', 'Pendiente')" id="btn-A-Pendiente" class="text-xs px-3 py-1.5 rounded-lg border font-medium bg-white border-slate-300 text-slate-700 hover:bg-slate-100">Pendiente</button>
-            <button onclick="setDecision('A', 'Aprobado')" id="btn-A-Aprobado" class="text-xs px-3 py-1.5 rounded-lg border font-medium bg-white border-slate-300 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300">✓ Aprobar indicio</button>
-            <button onclick="setDecision('A', 'Descartado')" id="btn-A-Descartado" class="text-xs px-3 py-1.5 rounded-lg border font-medium bg-white border-slate-300 text-slate-700 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300">✕ Descartar</button>
-          </div>
-          <input type="text" id="nota-A" oninput="saveNote('A')" placeholder="Nota de verificación del periodista (ej: Revisadas licitaciones 101/2025 y 104/2025 en BAC)..." class="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white text-slate-800 focus:ring-2 focus:ring-brand-500">
-          <p id="feedback-A" class="text-xs text-slate-500 mt-2">ℹ️ Pendiente: el Copiloto solo puede preparar solicitudes de acceso a la información.</p>
-        </div>
-      </article>
-
-      <!-- CARD CASO B -->
-      <article class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow transition-all border-l-4 border-l-sky-500">
-        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-          <div class="flex items-center space-x-2">
-            <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">INDICIO A VERIFICAR</span>
-            <span class="bg-purple-100 text-purple-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">PLAZO CORTO (&lt; 72H)</span>
-          </div>
-          <span class="text-xs text-slate-400 font-mono">Fuente: raw.caba__buenos_aires_compras__d09720af__v2</span>
-        </div>
-        <h3 class="text-lg font-bold text-slate-900 mb-2">
-          Proveedor B — servicios urbanos
-        </h3>
-        <p class="text-sm text-slate-600 leading-relaxed mb-4">
-          <b>Patrón:</b> Varios expedientes con menos de 48 horas hábiles entre la publicación y la apertura de sobres, con un solo oferente.
-        </p>
-        <div class="bg-slate-50 rounded-lg p-3 text-xs font-mono text-slate-700 flex flex-wrap gap-4 border border-slate-200">
-          <div><span class="text-slate-400">Regla:</span> Menos de 3 días hábiles entre convocatoria y apertura.</div>
-          <div><span class="text-slate-400">Organismo:</span> Ministerio de Espacio Público CABA</div>
-        </div>
-
-        <!-- PUERTA HUMANA -->
-        <div class="mt-4 pt-4 border-t border-slate-100 bg-slate-50/70 -mx-6 -mb-6 p-6 rounded-b-xl">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-700 font-mono">🧑‍⚖️ Puerta Humana — Decisión del periodista (Caso B)</span>
-            <span id="badge-estado-B" class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-slate-200 text-slate-700">Estado: Pendiente</span>
-          </div>
-          <div class="flex flex-wrap gap-2 mb-3">
-            <button onclick="setDecision('B', 'Pendiente')" id="btn-B-Pendiente" class="text-xs px-3 py-1.5 rounded-lg border font-medium bg-white border-slate-300 text-slate-700 hover:bg-slate-100">Pendiente</button>
-            <button onclick="setDecision('B', 'Aprobado')" id="btn-B-Aprobado" class="text-xs px-3 py-1.5 rounded-lg border font-medium bg-white border-slate-300 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300">✓ Aprobar indicio</button>
-            <button onclick="setDecision('B', 'Descartado')" id="btn-B-Descartado" class="text-xs px-3 py-1.5 rounded-lg border font-medium bg-white border-slate-300 text-slate-700 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300">✕ Descartar</button>
-          </div>
-          <input type="text" id="nota-B" oninput="saveNote('B')" placeholder="Nota de verificación del periodista (ej: Verificados 14 expedientes en el Boletín Oficial)..." class="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white text-slate-800 focus:ring-2 focus:ring-brand-500">
-          <p id="feedback-B" class="text-xs text-slate-500 mt-2">ℹ️ Pendiente: el Copiloto solo puede preparar solicitudes de acceso a la información.</p>
-        </div>
-      </article>
-
-      <!-- CARD CASO C -->
-      <article class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow transition-all border-l-4 border-l-rose-500">
-        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-          <div class="flex items-center space-x-2">
-            <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">INDICIO A VERIFICAR</span>
-            <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">DATOS DE CONTACTO COMPARTIDOS</span>
-          </div>
-          <span class="text-xs text-slate-400 font-mono">Fuente: Registro de Proveedores BAC</span>
-        </div>
-        <h3 class="text-lg font-bold text-slate-900 mb-2">
-          Proveedores C y D — obra vial
-        </h3>
-        <p class="text-sm text-slate-600 leading-relaxed mb-4">
-          <b>Patrón:</b> Dos empresas que compiten entre sí en licitaciones de pavimentación comparten teléfono comercial en el registro de proveedores.
-        </p>
-        <div class="bg-slate-50 rounded-lg p-3 text-xs font-mono text-slate-700 flex flex-wrap gap-4 border border-slate-200">
-          <div><span class="text-slate-400">Regla:</span> Oferentes con domicilio, teléfono o apoderado en común.</div>
-          <div><span class="text-slate-400">Organismo:</span> Dirección General de Obras Viales</div>
-        </div>
-
-        <!-- PUERTA HUMANA -->
-        <div class="mt-4 pt-4 border-t border-slate-100 bg-slate-50/70 -mx-6 -mb-6 p-6 rounded-b-xl">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-700 font-mono">🧑‍⚖️ Puerta Humana — Decisión del periodista (Caso C)</span>
-            <span id="badge-estado-C" class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-slate-200 text-slate-700">Estado: Pendiente</span>
-          </div>
-          <div class="flex flex-wrap gap-2 mb-3">
-            <button onclick="setDecision('C', 'Pendiente')" id="btn-C-Pendiente" class="text-xs px-3 py-1.5 rounded-lg border font-medium bg-white border-slate-300 text-slate-700 hover:bg-slate-100">Pendiente</button>
-            <button onclick="setDecision('C', 'Aprobado')" id="btn-C-Aprobado" class="text-xs px-3 py-1.5 rounded-lg border font-medium bg-white border-slate-300 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300">✓ Aprobar indicio</button>
-            <button onclick="setDecision('C', 'Descartado')" id="btn-C-Descartado" class="text-xs px-3 py-1.5 rounded-lg border font-medium bg-white border-slate-300 text-slate-700 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300">✕ Descartar</button>
-          </div>
-          <input type="text" id="nota-C" oninput="saveNote('C')" placeholder="Nota de verificación del periodista (ej: Constatado en IGJ y llamadas a la sede)..." class="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white text-slate-800 focus:ring-2 focus:ring-brand-500">
-          <p id="feedback-C" class="text-xs text-slate-500 mt-2">ℹ️ Pendiente: el Copiloto solo puede preparar solicitudes de acceso a la información.</p>
-        </div>
-      </article>
-    </section>
-
-    <!-- TAB 2: RANKING -->
-    <section id="tab-ranking" class="hidden space-y-6">
+    <!-- FILTROS & AMBITO -->
+    <div class="space-y-5 flex-1">
       <div>
-        <h2 class="text-xl font-bold text-slate-900">Ranking de Contratistas con Mayor Volumen de Adjudicación</h2>
-        <p class="text-sm text-slate-500">Agregación de 107.441 filas en OpenARG. El volumen de contratos por sí solo no es un indicio de irregularidad.</p>
-      </div>
-
-      <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-        <canvas id="rankingChart" height="110"></canvas>
-      </div>
-
-      <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
-        <table class="min-w-full divide-y divide-slate-200 text-sm">
-          <thead class="bg-slate-50 text-slate-500 font-mono text-xs uppercase">
-            <tr>
-              <th class="px-6 py-3 text-left font-semibold">Contratista</th>
-              <th class="px-6 py-3 text-right font-semibold">Monto Total ($ ARS)</th>
-              <th class="px-6 py-3 text-right font-semibold">Contratos Ganados</th>
-              <th class="px-6 py-3 text-center font-semibold">Contexto</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-200 text-slate-700">
-            <tr>
-              <td class="px-6 py-4 font-semibold text-slate-900">DROGUERIA COMARSA S.A.</td>
-              <td class="px-6 py-4 text-right font-mono">$3.426.795 M</td>
-              <td class="px-6 py-4 text-right font-mono">9.568</td>
-              <td class="px-6 py-4 text-center"><span class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded font-mono">Salud Pública</span></td>
-            </tr>
-            <tr>
-              <td class="px-6 py-4 font-semibold text-slate-900">DROGUERIA VARADERO S.A.</td>
-              <td class="px-6 py-4 text-right font-mono">$1.072.175 M</td>
-              <td class="px-6 py-4 text-right font-mono">3.401</td>
-              <td class="px-6 py-4 text-center"><span class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded font-mono">Insumos Hospitalarios</span></td>
-            </tr>
-            <tr>
-              <td class="px-6 py-4 font-semibold text-slate-900">REDIMER S.A.</td>
-              <td class="px-6 py-4 text-right font-mono">$440.479 M</td>
-              <td class="px-6 py-4 text-right font-mono">184</td>
-              <td class="px-6 py-4 text-center"><span class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded font-mono">Equipamiento Médico</span></td>
-            </tr>
-            <tr>
-              <td class="px-6 py-4 font-semibold text-slate-900">MEDI SISTEM S.R.L.</td>
-              <td class="px-6 py-4 text-right font-mono">$297.599 M</td>
-              <td class="px-6 py-4 text-right font-mono">3.770</td>
-              <td class="px-6 py-4 text-center"><span class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded font-mono">Farmacia & Diagnóstico</span></td>
-            </tr>
-            <tr>
-              <td class="px-6 py-4 font-semibold text-slate-900">CORPORACION PARA LA DEFENSA DEL SUR S.A.</td>
-              <td class="px-6 py-4 text-right font-mono">$222.347 M</td>
-              <td class="px-6 py-4 text-right font-mono">60</td>
-              <td class="px-6 py-4 text-center"><span class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded font-mono">Servicios Urbanos</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- TAB 3: COPILOTO AGÉNTICO -->
-    <section id="tab-copiloto" class="hidden space-y-6">
-      <div>
-        <h2 class="text-xl font-bold text-slate-900">Copiloto Agéntico con Barrera Ética</h2>
-        <p class="text-sm text-slate-500">El asistente solo genera fichas e hipótesis sobre indicios aprobados por el periodista. Para indicios pendientes, solo prepara pedidos de acceso a la información.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-          <label class="block text-sm font-semibold text-slate-800">Seleccionar Caso para Profundizar:</label>
-          <select id="casoSelect" onchange="updateCopilotoState()" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm bg-white focus:ring-2 focus:ring-brand-500">
-            <option value="A">Proveedor A — sector salud</option>
-            <option value="B">Proveedor B — servicios urbanos</option>
-            <option value="C">Proveedores C y D — obra vial</option>
+        <label class="block text-xs font-mono uppercase tracking-wider text-radar-muted mb-2">Ámbito de auditoría</label>
+        <div class="relative">
+          <select id="select-ambito" class="w-full bg-[#111C38] border border-radar-line rounded-lg py-2.5 px-3 text-sm text-radar-text font-medium appearance-none focus:outline-none focus:border-radar-amber">
+            <option value="caba" selected>🏛️ CABA — Buenos Aires Compras (BAC)</option>
+            <option value="nacional">🇦🇷 Nacional — Presupuesto & Obra Pública</option>
+            <option value="mexico">🇲🇽 México — Compranet / PNT (Demo)</option>
           </select>
-
-          <div class="flex items-center space-x-2 text-xs">
-            <span class="text-slate-500 font-medium">Estado actual de la verificación:</span>
-            <span id="copiloto-estado-badge" class="font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-800 font-mono">Pendiente</span>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-radar-muted">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
           </div>
-
-          <label class="block text-sm font-semibold text-slate-800 pt-2">¿Qué querés que prepare el Agente?</label>
-          <div class="space-y-2 text-sm text-slate-700">
-            <label class="flex items-center space-x-2 cursor-pointer">
-              <input type="radio" name="agentAction" value="foia" checked class="text-brand-500">
-              <span>⚖️ Redactar Pedido de Acceso a la Información (Ley 104 / 27.275)</span>
-            </label>
-            <label class="flex items-center space-x-2 cursor-pointer">
-              <input type="radio" name="agentAction" value="ficha" class="text-brand-500">
-              <span>📋 Ficha de Investigación y preguntas de réplica</span>
-            </label>
-          </div>
-
-          <button onclick="runAgent()" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-semibold py-2.5 rounded-lg shadow transition-colors text-sm">
-            🤖 Ejecutar Agente de Auditoría
-          </button>
-        </div>
-
-        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col">
-          <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
-            <span class="text-xs font-mono font-bold text-slate-500 uppercase">Documento Generado por el Agente</span>
-            <button onclick="copyDoc()" class="text-xs text-brand-600 hover:underline">Copiar texto</button>
-          </div>
-          <div id="agentWarning" class="hidden mb-3 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-xs leading-relaxed">
-            🔒 <b>Indicio no aprobado:</b> Rastro no genera fichas ni hipótesis publicables sin verificación humana previa. Aprobalo primero en la pestaña de indicios o pedí información pública oficial.
-          </div>
-          <textarea id="agentOutput" readonly class="w-full flex-1 bg-slate-50 font-mono text-xs text-slate-800 p-3 rounded-lg border border-slate-200 focus:outline-none resize-none min-h-[260px]">
-Elija una acción y presione "Ejecutar Agente de Auditoría".
-          </textarea>
         </div>
       </div>
-    </section>
 
-    <!-- TAB 4: MODO CÍVICO -->
-    <section id="tab-civico" class="hidden space-y-6">
       <div>
-        <h2 class="text-xl font-bold text-slate-900">Modo Cívico: Abierto y Gratuito para Todo Público</h2>
-        <p class="text-sm text-slate-500">Rastro es una herramienta abierta: cualquier persona puede consultar cómo gasta su municipio o su ciudad.</p>
-      </div>
-
-      <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
-        <div class="p-4 bg-brand-50/60 rounded-xl border border-brand-100 text-slate-700 text-sm leading-relaxed">
-          <p class="font-medium text-brand-950 mb-1">Cualquier vecino o periodista local puede consultar:</p>
-          <blockquote class="italic text-brand-600 border-l-2 border-brand-500 pl-3 my-2">
-            «¿Qué obras de bacheo o escuelas se licitaron en mi comuna este año y quiénes las ganaron?»
-          </blockquote>
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-slate-200 text-sm">
-            <thead class="bg-slate-50 text-slate-500 font-mono text-xs uppercase">
-              <tr>
-                <th class="px-4 py-3 text-left font-semibold">Nivel</th>
-                <th class="px-4 py-3 text-left font-semibold">Quién</th>
-                <th class="px-4 py-3 text-left font-semibold">Qué puede hacer</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-200 text-slate-700">
-              <tr>
-                <td class="px-4 py-3 font-semibold text-slate-900">Abierto</td>
-                <td class="px-4 py-3 text-slate-600">Cualquier persona</td>
-                <td class="px-4 py-3">Consultar contratos y ver indicios con la regla y el documento que los respaldan.</td>
-              </tr>
-              <tr>
-                <td class="px-4 py-3 font-semibold text-slate-900">Verificación</td>
-                <td class="px-4 py-3 text-slate-600">Periodistas, organizaciones y comunidad acreditada</td>
-                <td class="px-4 py-3">Aprobar o descartar indicios, agregar notas de campo y generar fichas investigativas.</td>
-              </tr>
-              <tr>
-                <td class="px-4 py-3 font-semibold text-slate-900">Institucional</td>
-                <td class="px-4 py-3 text-slate-600">Medios, OSC, órganos de control</td>
-                <td class="px-4 py-3">Monitoreo continuo, alertas tempranas automatizadas y conexión por API.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-xs text-emerald-900 leading-relaxed font-medium">
-          💡 <b>Los indicios son públicos; las historias solo salen con verificación humana.</b> Código abierto, sostenido con fondos, servicios institucionales y membresías comunitarias.
+        <label class="block text-xs font-mono uppercase tracking-wider text-radar-muted mb-2">Reglas activas</label>
+        <div class="space-y-2">
+          <div class="flex items-center justify-between bg-radar-amber/15 border border-radar-amber/40 text-radar-amber rounded-md px-2.5 py-1.5 text-xs font-mono font-semibold">
+            <span>Concentración de Contratos</span>
+            <span class="text-[10px] bg-radar-amber text-slate-950 font-bold px-1.5 py-0.2 rounded">ACTIVA</span>
+          </div>
+          <div class="flex items-center justify-between bg-radar-amber/15 border border-radar-amber/40 text-radar-amber rounded-md px-2.5 py-1.5 text-xs font-mono font-semibold">
+            <span>Competencia recurrente</span>
+            <span class="text-[10px] bg-radar-amber text-slate-950 font-bold px-1.5 py-0.2 rounded">ACTIVA</span>
+          </div>
+          <div class="flex items-center justify-between bg-radar-panel border border-radar-line text-radar-muted rounded-md px-2.5 py-1.5 text-xs font-mono">
+            <span>Plazos cortos (&lt; 72h)</span>
+            <span class="text-[10px] text-slate-500">Muestreo</span>
+          </div>
+          <div class="flex items-center justify-between bg-radar-panel border border-radar-line text-radar-muted rounded-md px-2.5 py-1.5 text-xs font-mono">
+            <span>Vínculos registrales</span>
+            <span class="text-[10px] text-slate-500">Muestreo</span>
+          </div>
         </div>
       </div>
-    </section>
 
+      <!-- DECK LINK BUTTON -->
+      <div class="pt-3">
+        <a href="/deck" target="_blank" class="flex items-center justify-center gap-2 w-full py-2.5 px-3 rounded-lg bg-gradient-to-r from-radar-panel2 to-radar-panel border border-radar-line hover:border-radar-amber text-xs font-mono font-bold text-white transition-all shadow-sm group">
+          <span>🎤 Presentación Pitch (Deck)</span>
+          <span class="group-hover:translate-x-1 transition-transform">↗</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- FOOTER INFO -->
+    <div class="pt-6 mt-6 border-t border-radar-line text-xs space-y-2">
+      <div>
+        <span class="text-radar-muted block text-[11px]">Metodología:</span>
+        <span class="font-semibold text-white">Giovanny Flores (México)</span>
+      </div>
+      <div>
+        <span class="text-radar-muted block text-[11px]">Desarrollo & OpenARG:</span>
+        <span class="font-semibold text-white">Gabo</span>
+      </div>
+      <div class="pt-2 text-[11px] text-radar-muted font-mono flex items-center justify-between">
+        <span>Media Party BA 2026</span>
+        <span class="text-radar-amber font-bold">v0.4 DEMO</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN VIEWPORT -->
+  <main class="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 overflow-y-auto scrollbar-thin">
+    <div class="max-w-6xl mx-auto space-y-6">
+
+      <!-- TOP HERO & STATUS -->
+      <div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+          Rastro<span class="text-radar-amber">.</span> Radar de integridad en compras públicas
+        </h2>
+        <p class="text-radar-muted text-sm sm:text-base mt-1.5 max-w-3xl">
+          La máquina encuentra indicios objetivos. El periodista investiga y decide la historia.
+        </p>
+
+        <!-- MONOSPACE STATUS LINE -->
+        <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 py-2 px-3.5 bg-radar-panel border border-radar-line rounded-lg text-xs font-mono text-radar-muted">
+          <span class="flex items-center gap-2 text-white font-semibold">
+            <span class="pulse-dot"></span> RADAR ACTIVO
+          </span>
+          <span class="text-radar-line">|</span>
+          <span>FUENTE: <span class="text-slate-200">OpenARG · BAC CABA</span></span>
+          <span class="text-radar-line">|</span>
+          <span>REGISTROS: <span class="text-slate-200">107.441</span></span>
+          <span class="text-radar-line">|</span>
+          <span>REGLAS: <span class="text-radar-amber">2 activas</span></span>
+          <span class="text-radar-line">|</span>
+          <span>MODO: <span class="text-slate-200">demo · casos anonimizados</span></span>
+        </div>
+      </div>
+
+      <!-- TABS NAVIGATION (Gio's 4 Tabs) -->
+      <div class="border-b border-radar-line">
+        <nav class="flex space-x-2 overflow-x-auto scrollbar-thin -mb-px" aria-label="Tabs">
+          <button onclick="switchTab('radar')" id="tab-btn-radar" class="tab-active py-3 px-4 border-b-2 font-mono text-xs sm:text-sm font-semibold rounded-t-lg bg-radar-panel border-radar-line text-radar-muted hover:text-white flex items-center gap-2 transition-all shrink-0">
+            <span>🛰️</span>
+            <span>Radar de indicios</span>
+          </button>
+          <button onclick="switchTab('explorador')" id="tab-btn-explorador" class="py-3 px-4 border-b-2 border-transparent font-mono text-xs sm:text-sm font-medium rounded-t-lg bg-radar-panel border-radar-line text-radar-muted hover:text-white flex items-center gap-2 transition-all shrink-0">
+            <span>📊</span>
+            <span>Explorador de contratistas</span>
+          </button>
+          <button onclick="switchTab('copiloto')" id="tab-btn-copiloto" class="py-3 px-4 border-b-2 border-transparent font-mono text-xs sm:text-sm font-medium rounded-t-lg bg-radar-panel border-radar-line text-radar-muted hover:text-white flex items-center gap-2 transition-all shrink-0">
+            <span>🤖</span>
+            <span>Copiloto IA</span>
+          </button>
+          <button onclick="switchTab('civico')" id="tab-btn-civico" class="py-3 px-4 border-b-2 border-transparent font-mono text-xs sm:text-sm font-medium rounded-t-lg bg-radar-panel border-radar-line text-radar-muted hover:text-white flex items-center gap-2 transition-all shrink-0">
+            <span>👥</span>
+            <span>Modo cívico</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- ====================================================================== -->
+      <!-- TAB 1: RADAR DE INDICIOS -->
+      <!-- ====================================================================== -->
+      <section id="tab-radar" class="space-y-6">
+
+        <!-- 4 KPIS GRID -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+          <div class="bg-radar-panel border border-radar-line rounded-xl p-4">
+            <div class="text-[11px] font-mono uppercase tracking-wider text-radar-muted">Contratos en la base</div>
+            <div class="text-2xl sm:text-3xl font-mono font-bold text-white mt-1.5">107.441</div>
+            <div class="text-[11px] text-radar-muted mt-1 font-mono">100% ingestados</div>
+          </div>
+          <div class="bg-radar-panel border border-radar-line rounded-xl p-4 border-l-4 border-l-radar-amber">
+            <div class="text-[11px] font-mono uppercase tracking-wider text-radar-muted">Pendientes de verificación</div>
+            <div id="kpi-pendientes" class="text-2xl sm:text-3xl font-mono font-bold text-radar-amber mt-1.5">3</div>
+            <div class="text-[11px] text-radar-amber/80 mt-1 font-mono">Requiere periodista</div>
+          </div>
+          <div class="bg-radar-panel border border-radar-line rounded-xl p-4 border-l-4 border-l-radar-emerald">
+            <div class="text-[11px] font-mono uppercase tracking-wider text-radar-muted">Verificados por periodista</div>
+            <div id="kpi-verificados" class="text-2xl sm:text-3xl font-mono font-bold text-radar-emerald mt-1.5">0</div>
+            <div class="text-[11px] text-radar-emerald/80 mt-1 font-mono">Puerta humana aprobada</div>
+          </div>
+          <div class="bg-radar-panel border border-radar-line rounded-xl p-4">
+            <div class="text-[11px] font-mono uppercase tracking-wider text-radar-muted">Descartados</div>
+            <div id="kpi-descartados" class="text-2xl sm:text-3xl font-mono font-bold text-slate-400 mt-1.5">0</div>
+            <div class="text-[11px] text-radar-muted mt-1 font-mono">Falsos positivos</div>
+          </div>
+        </div>
+
+        <p class="text-xs text-radar-muted font-mono bg-radar-panel/60 border border-radar-line px-3.5 py-2 rounded-lg">
+          💡 <b class="text-slate-300">Protocolo periodístico:</b> Casos ilustrativos y anonimizados. Un indicio algorítmico <span class="underline decoration-radar-amber">no es una acusación</span>: ninguna ficha se publica sin la decisión explícita de un periodista.
+        </p>
+
+        <!-- CASOS LIST -->
+        <div class="space-y-5" id="cases-container">
+          <!-- CASO A -->
+          <article id="card-caso-A" class="bg-gradient-to-b from-radar-panel2 to-radar-panel border border-radar-line border-l-4 border-l-radar-amber rounded-2xl p-5 sm:p-6 transition-all duration-200">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <span class="text-xs font-mono text-radar-muted tracking-wider">FICHA DE RADAR · RST-CABA-A-001</span>
+              <span id="badge-caso-A" class="text-xs font-mono font-bold px-3 py-1 rounded-full bg-radar-amber/15 text-amber-300 border border-radar-amber/40">
+                ● PENDIENTE DE VERIFICACIÓN
+              </span>
+            </div>
+
+            <h3 class="text-xl font-bold text-white mb-2">Proveedor A — sector salud</h3>
+
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class="text-xs font-mono px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">#CompetenciaRecurrente</span>
+              <span class="text-xs font-mono px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">#MismaTerna</span>
+              <span class="text-xs font-mono px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">#Salud</span>
+            </div>
+
+            <p class="text-sm text-slate-200 leading-relaxed mb-4">
+              <b>Patrón:</b> En la mayoría de sus concursos compite contra la misma terna de distribuidoras, que pierden por márgenes mínimos.
+            </p>
+
+            <!-- SIGNAL METER -->
+            <div class="mb-4 bg-radar-bg/60 p-3 rounded-xl border border-radar-line">
+              <div class="flex justify-between text-xs font-mono text-radar-muted mb-1.5">
+                <span class="font-semibold text-slate-300">FUERZA DE LA SEÑAL (algorítmica)</span>
+                <span class="text-radar-amber font-bold">78 / 100</span>
+              </div>
+              <div class="w-full bg-[#0A1024] h-2.5 rounded-full overflow-hidden border border-radar-line">
+                <div class="bg-gradient-to-r from-amber-400 via-radar-amber to-red-500 h-full rounded-full transition-all duration-500" style="width: 78%"></div>
+              </div>
+            </div>
+
+            <!-- GRID METADATA -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
+              <div class="bg-[#0C1530] border border-radar-line rounded-lg p-3">
+                <div class="text-[10px] font-mono uppercase tracking-wider text-radar-muted">Regla que lo disparó</div>
+                <div class="text-xs text-slate-200 mt-1 font-medium leading-relaxed">Competencia recurrente: mismo grupo de oferentes en 3 o más procedimientos.</div>
+              </div>
+              <div class="bg-[#0C1530] border border-radar-line rounded-lg p-3">
+                <div class="text-[10px] font-mono uppercase tracking-wider text-radar-muted">Organismo contratante</div>
+                <div class="text-xs text-slate-200 mt-1 font-medium leading-relaxed">Ministerio de Salud CABA / Hospitales Públicos</div>
+              </div>
+              <div class="bg-[#0C1530] border border-radar-line rounded-lg p-3">
+                <div class="text-[10px] font-mono uppercase tracking-wider text-radar-muted">Fuente OpenARG</div>
+                <div class="text-xs text-amber-300 font-mono mt-1 break-all">raw.caba__buenos_aires_compras__d09720af__v2</div>
+              </div>
+            </div>
+
+            <!-- PUERTA HUMANA (Human-in-the-loop decision) -->
+            <div class="bg-radar-bg/80 border border-radar-lineLight rounded-xl p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono font-bold tracking-wider text-radar-amber uppercase flex items-center gap-1.5">
+                  🧑‍⚖️ Puerta humana · Decisión editorial (Caso A)
+                </span>
+                <span class="text-[11px] text-radar-muted font-mono">Firma obligatoria para publicar</span>
+              </div>
+
+              <input type="text" id="nota-A" placeholder="Escribí tu nota de verificación (ej: Revisé actas de las 5 licitaciones en BAC y se repiten los 3 apoderados)..."
+                class="w-full bg-[#0C1530] border border-radar-line focus:border-radar-amber rounded-lg py-2 px-3 text-xs text-slate-200 placeholder-slate-500 font-sans focus:outline-none transition-colors"
+                oninput="updateCaseNote('A', this.value)">
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <button onclick="setCaseDecision('A', 'Aprobado')" id="btn-ok-A"
+                  class="py-2.5 px-3 rounded-lg bg-emerald-950/70 hover:bg-emerald-800 text-emerald-200 border border-radar-emerald/60 text-xs font-bold font-mono flex items-center justify-center gap-1.5 transition-all shadow-sm">
+                  <span>✔</span>
+                  <span>Verificar y aprobar</span>
+                </button>
+                <button onclick="setCaseDecision('A', 'Pendiente')" id="btn-pe-A"
+                  class="py-2.5 px-3 rounded-lg bg-amber-950/70 hover:bg-amber-900 text-amber-200 border border-radar-amber/60 text-xs font-bold font-mono flex items-center justify-center gap-1.5 transition-all shadow-sm">
+                  <span>●</span>
+                  <span>Dejar pendiente</span>
+                </button>
+                <button onclick="setCaseDecision('A', 'Descartado')" id="btn-no-A"
+                  class="py-2.5 px-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-bold font-mono flex items-center justify-center gap-1.5 transition-all shadow-sm">
+                  <span>✕</span>
+                  <span>Descartar indicio</span>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- CASO B -->
+          <article id="card-caso-B" class="bg-gradient-to-b from-radar-panel2 to-radar-panel border border-radar-line border-l-4 border-l-radar-amber rounded-2xl p-5 sm:p-6 transition-all duration-200">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <span class="text-xs font-mono text-radar-muted tracking-wider">FICHA DE RADAR · RST-CABA-B-002</span>
+              <span id="badge-caso-B" class="text-xs font-mono font-bold px-3 py-1 rounded-full bg-radar-amber/15 text-amber-300 border border-radar-amber/40">
+                ● PENDIENTE DE VERIFICACIÓN
+              </span>
+            </div>
+
+            <h3 class="text-xl font-bold text-white mb-2">Proveedor B — servicios urbanos</h3>
+
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class="text-xs font-mono px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">#Plazo48hs</span>
+              <span class="text-xs font-mono px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">#OferenteÚnico</span>
+              <span class="text-xs font-mono px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">#EspacioPúblico</span>
+            </div>
+
+            <p class="text-sm text-slate-200 leading-relaxed mb-4">
+              <b>Patrón:</b> Varios expedientes con menos de 48 horas hábiles entre la publicación y la apertura de sobres, con un solo oferente presentado.
+            </p>
+
+            <div class="mb-4 bg-radar-bg/60 p-3 rounded-xl border border-radar-line">
+              <div class="flex justify-between text-xs font-mono text-radar-muted mb-1.5">
+                <span class="font-semibold text-slate-300">FUERZA DE LA SEÑAL (algorítmica)</span>
+                <span class="text-radar-amber font-bold">64 / 100</span>
+              </div>
+              <div class="w-full bg-[#0A1024] h-2.5 rounded-full overflow-hidden border border-radar-line">
+                <div class="bg-gradient-to-r from-amber-400 via-radar-amber to-red-500 h-full rounded-full transition-all duration-500" style="width: 64%"></div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
+              <div class="bg-[#0C1530] border border-radar-line rounded-lg p-3">
+                <div class="text-[10px] font-mono uppercase tracking-wider text-radar-muted">Regla que lo disparó</div>
+                <div class="text-xs text-slate-200 mt-1 font-medium leading-relaxed">Plazo corto: menos de 3 días hábiles entre convocatoria y apertura.</div>
+              </div>
+              <div class="bg-[#0C1530] border border-radar-line rounded-lg p-3">
+                <div class="text-[10px] font-mono uppercase tracking-wider text-radar-muted">Organismo contratante</div>
+                <div class="text-xs text-slate-200 mt-1 font-medium leading-relaxed">Ministerio de Espacio Público CABA</div>
+              </div>
+              <div class="bg-[#0C1530] border border-radar-line rounded-lg p-3">
+                <div class="text-[10px] font-mono uppercase tracking-wider text-radar-muted">Fuente OpenARG</div>
+                <div class="text-xs text-amber-300 font-mono mt-1 break-all">raw.caba__buenos_aires_compras__d09720af__v2</div>
+              </div>
+            </div>
+
+            <div class="bg-radar-bg/80 border border-radar-lineLight rounded-xl p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono font-bold tracking-wider text-radar-amber uppercase flex items-center gap-1.5">
+                  🧑‍⚖️ Puerta humana · Decisión editorial (Caso B)
+                </span>
+                <span class="text-[11px] text-radar-muted font-mono">Firma obligatoria para publicar</span>
+              </div>
+
+              <input type="text" id="nota-B" placeholder="Escribí tu nota de verificación (ej: Confirmado en Boletín Oficial fechas de publicación y apertura)..."
+                class="w-full bg-[#0C1530] border border-radar-line focus:border-radar-amber rounded-lg py-2 px-3 text-xs text-slate-200 placeholder-slate-500 font-sans focus:outline-none transition-colors"
+                oninput="updateCaseNote('B', this.value)">
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <button onclick="setCaseDecision('B', 'Aprobado')" id="btn-ok-B"
+                  class="py-2.5 px-3 rounded-lg bg-emerald-950/70 hover:bg-emerald-800 text-emerald-200 border border-radar-emerald/60 text-xs font-bold font-mono flex items-center justify-center gap-1.5 transition-all shadow-sm">
+                  <span>✔</span>
+                  <span>Verificar y aprobar</span>
+                </button>
+                <button onclick="setCaseDecision('B', 'Pendiente')" id="btn-pe-B"
+                  class="py-2.5 px-3 rounded-lg bg-amber-950/70 hover:bg-amber-900 text-amber-200 border border-radar-amber/60 text-xs font-bold font-mono flex items-center justify-center gap-1.5 transition-all shadow-sm">
+                  <span>●</span>
+                  <span>Dejar pendiente</span>
+                </button>
+                <button onclick="setCaseDecision('B', 'Descartado')" id="btn-no-B"
+                  class="py-2.5 px-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-bold font-mono flex items-center justify-center gap-1.5 transition-all shadow-sm">
+                  <span>✕</span>
+                  <span>Descartar indicio</span>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- CASO C -->
+          <article id="card-caso-C" class="bg-gradient-to-b from-radar-panel2 to-radar-panel border border-radar-line border-l-4 border-l-radar-amber rounded-2xl p-5 sm:p-6 transition-all duration-200">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <span class="text-xs font-mono text-radar-muted tracking-wider">FICHA DE RADAR · RST-CABA-C-003</span>
+              <span id="badge-caso-C" class="text-xs font-mono font-bold px-3 py-1 rounded-full bg-radar-amber/15 text-amber-300 border border-radar-amber/40">
+                ● PENDIENTE DE VERIFICACIÓN
+              </span>
+            </div>
+
+            <h3 class="text-xl font-bold text-white mb-2">Proveedores C y D — obra vial</h3>
+
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class="text-xs font-mono px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">#VínculoRegistral</span>
+              <span class="text-xs font-mono px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">#TeléfonoCompartido</span>
+              <span class="text-xs font-mono px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">#ObraVial</span>
+            </div>
+
+            <p class="text-sm text-slate-200 leading-relaxed mb-4">
+              <b>Patrón:</b> Dos empresas que compiten entre sí en licitaciones de pavimentación comparten teléfono comercial en el registro de proveedores.
+            </p>
+
+            <div class="mb-4 bg-radar-bg/60 p-3 rounded-xl border border-radar-line">
+              <div class="flex justify-between text-xs font-mono text-radar-muted mb-1.5">
+                <span class="font-semibold text-slate-300">FUERZA DE LA SEÑAL (algorítmica)</span>
+                <span class="text-radar-amber font-bold">52 / 100</span>
+              </div>
+              <div class="w-full bg-[#0A1024] h-2.5 rounded-full overflow-hidden border border-radar-line">
+                <div class="bg-gradient-to-r from-amber-400 via-radar-amber to-red-500 h-full rounded-full transition-all duration-500" style="width: 52%"></div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
+              <div class="bg-[#0C1530] border border-radar-line rounded-lg p-3">
+                <div class="text-[10px] font-mono uppercase tracking-wider text-radar-muted">Regla que lo disparó</div>
+                <div class="text-xs text-slate-200 mt-1 font-medium leading-relaxed">Vínculo registral: oferentes del mismo procedimiento con domicilio, teléfono o apoderado común.</div>
+              </div>
+              <div class="bg-[#0C1530] border border-radar-line rounded-lg p-3">
+                <div class="text-[10px] font-mono uppercase tracking-wider text-radar-muted">Organismo contratante</div>
+                <div class="text-xs text-slate-200 mt-1 font-medium leading-relaxed">Dirección General de Obras Viales</div>
+              </div>
+              <div class="bg-[#0C1530] border border-radar-line rounded-lg p-3">
+                <div class="text-[10px] font-mono uppercase tracking-wider text-radar-muted">Fuente OpenARG</div>
+                <div class="text-xs text-amber-300 font-mono mt-1 break-all">Registro de Proveedores BAC</div>
+              </div>
+            </div>
+
+            <div class="bg-radar-bg/80 border border-radar-lineLight rounded-xl p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono font-bold tracking-wider text-radar-amber uppercase flex items-center gap-1.5">
+                  🧑‍⚖️ Puerta humana · Decisión editorial (Caso C)
+                </span>
+                <span class="text-[11px] text-radar-muted font-mono">Firma obligatoria para publicar</span>
+              </div>
+
+              <input type="text" id="nota-C" placeholder="Escribí tu nota de verificación (ej: Constatado en IGJ y llamadas a la sede que comparten administración)..."
+                class="w-full bg-[#0C1530] border border-radar-line focus:border-radar-amber rounded-lg py-2 px-3 text-xs text-slate-200 placeholder-slate-500 font-sans focus:outline-none transition-colors"
+                oninput="updateCaseNote('C', this.value)">
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <button onclick="setCaseDecision('C', 'Aprobado')" id="btn-ok-C"
+                  class="py-2.5 px-3 rounded-lg bg-emerald-950/70 hover:bg-emerald-800 text-emerald-200 border border-radar-emerald/60 text-xs font-bold font-mono flex items-center justify-center gap-1.5 transition-all shadow-sm">
+                  <span>✔</span>
+                  <span>Verificar y aprobar</span>
+                </button>
+                <button onclick="setCaseDecision('C', 'Pendiente')" id="btn-pe-C"
+                  class="py-2.5 px-3 rounded-lg bg-amber-950/70 hover:bg-amber-900 text-amber-200 border border-radar-amber/60 text-xs font-bold font-mono flex items-center justify-center gap-1.5 transition-all shadow-sm">
+                  <span>●</span>
+                  <span>Dejar pendiente</span>
+                </button>
+                <button onclick="setCaseDecision('C', 'Descartado')" id="btn-no-C"
+                  class="py-2.5 px-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-bold font-mono flex items-center justify-center gap-1.5 transition-all shadow-sm">
+                  <span>✕</span>
+                  <span>Descartar indicio</span>
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ====================================================================== -->
+      <!-- TAB 2: EXPLORADOR DE CONTRATISTAS -->
+      <!-- ====================================================================== -->
+      <section id="tab-explorador" class="hidden space-y-6">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-radar-amber font-bold">Explorador de Datos</span>
+          <h3 class="text-2xl font-bold text-white mt-1">Contratistas con mayor volumen adjudicado en CABA</h3>
+          <p class="text-sm text-radar-muted mt-1">
+            Agregación de 107.441 filas en OpenARG. El volumen de contratos por sí solo no es un indicio de irregularidad.
+          </p>
+        </div>
+
+        <!-- CHART CONTAINER -->
+        <div class="bg-radar-panel border border-radar-line rounded-2xl p-5 sm:p-6">
+          <div class="h-80 w-full">
+            <canvas id="contractorsChart"></canvas>
+          </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="bg-radar-panel border border-radar-line rounded-2xl overflow-hidden shadow-sm">
+          <div class="px-5 py-4 border-b border-radar-line flex justify-between items-center">
+            <span class="text-xs font-mono uppercase text-radar-muted font-semibold">Detalle de Contratistas Clave</span>
+            <span class="text-xs font-mono text-radar-amber">Top 5 por Monto</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm font-sans">
+              <thead class="bg-[#0C1530] text-radar-muted font-mono text-xs uppercase border-b border-radar-line">
+                <tr>
+                  <th class="py-3 px-4">Contratista</th>
+                  <th class="py-3 px-4 text-right">Monto Total Adjudicado</th>
+                  <th class="py-3 px-4 text-right">Contratos Ganados</th>
+                  <th class="py-3 px-4 text-center">Estado en Radar</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-radar-line text-slate-200">
+                <tr class="hover:bg-radar-panel2/50 transition-colors">
+                  <td class="py-3.5 px-4 font-bold text-white">DROGUERIA COMARSA S.A.</td>
+                  <td class="py-3.5 px-4 text-right font-mono text-amber-300">$ 3.426.795.644.515</td>
+                  <td class="py-3.5 px-4 text-right font-mono font-semibold">9.568</td>
+                  <td class="py-3.5 px-4 text-center"><span class="px-2 py-0.5 text-xs font-mono rounded bg-radar-amber/15 text-amber-300 border border-radar-amber/30">Indicio A</span></td>
+                </tr>
+                <tr class="hover:bg-radar-panel2/50 transition-colors">
+                  <td class="py-3.5 px-4 font-bold text-white">DROGUERIA VARADERO S.A.</td>
+                  <td class="py-3.5 px-4 text-right font-mono text-amber-300">$ 1.072.175.964.900</td>
+                  <td class="py-3.5 px-4 text-right font-mono font-semibold">3.401</td>
+                  <td class="py-3.5 px-4 text-center"><span class="px-2 py-0.5 text-xs font-mono rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">Terna Salud</span></td>
+                </tr>
+                <tr class="hover:bg-radar-panel2/50 transition-colors">
+                  <td class="py-3.5 px-4 font-bold text-white">REDIMER S.A.</td>
+                  <td class="py-3.5 px-4 text-right font-mono text-amber-300">$ 440.479.447.734</td>
+                  <td class="py-3.5 px-4 text-right font-mono font-semibold">184</td>
+                  <td class="py-3.5 px-4 text-center"><span class="px-2 py-0.5 text-xs font-mono rounded bg-slate-800 text-slate-400">Sin alertas</span></td>
+                </tr>
+                <tr class="hover:bg-radar-panel2/50 transition-colors">
+                  <td class="py-3.5 px-4 font-bold text-white">MEDI SISTEM S.R.L.</td>
+                  <td class="py-3.5 px-4 text-right font-mono text-amber-300">$ 297.599.358.486</td>
+                  <td class="py-3.5 px-4 text-right font-mono font-semibold">3.770</td>
+                  <td class="py-3.5 px-4 text-center"><span class="px-2 py-0.5 text-xs font-mono rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">Terna Salud</span></td>
+                </tr>
+                <tr class="hover:bg-radar-panel2/50 transition-colors">
+                  <td class="py-3.5 px-4 font-bold text-white">CORPORACION PARA LA DEFENSA DEL SUR S.A.</td>
+                  <td class="py-3.5 px-4 text-right font-mono text-amber-300">$ 222.347.837.340</td>
+                  <td class="py-3.5 px-4 text-right font-mono font-semibold">60</td>
+                  <td class="py-3.5 px-4 text-center"><span class="px-2 py-0.5 text-xs font-mono rounded bg-radar-amber/15 text-amber-300 border border-radar-amber/30">Indicio B</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================== -->
+      <!-- TAB 3: COPILOTO IA -->
+      <!-- ====================================================================== -->
+      <section id="tab-copiloto" class="hidden space-y-6">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-radar-amber font-bold">Copiloto IA</span>
+          <h3 class="text-2xl font-bold text-white mt-1">El agente prepara; el periodista decide</h3>
+          <p class="text-sm text-radar-muted mt-1">
+            Asistencia en la redacción de pedidos de acceso a la información y síntesis de expedientes basada en evidencia documental.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+          <!-- PANEL IZQUIERDO: CONTROLES -->
+          <div class="lg:col-span-5 bg-radar-panel border border-radar-line rounded-2xl p-5 sm:p-6 space-y-5">
+            <div>
+              <label class="block text-xs font-mono uppercase tracking-wider text-radar-muted mb-2">Caso a investigar</label>
+              <select id="copiloto-caso-select" onchange="onCopilotoCasoChange()"
+                class="w-full bg-[#0C1530] border border-radar-line rounded-lg py-2.5 px-3 text-sm text-white font-medium focus:outline-none focus:border-radar-amber">
+                <option value="A" selected>Proveedor A — sector salud</option>
+                <option value="B">Proveedor B — servicios urbanos</option>
+                <option value="C">Proveedores C y D — obra vial</option>
+              </select>
+            </div>
+
+            <!-- BADGE DE ESTADO DEL CASO SELECCIONADO -->
+            <div>
+              <div class="text-[11px] font-mono uppercase tracking-wider text-radar-muted mb-1.5">Estado de verificación</div>
+              <div id="copiloto-caso-badge" class="inline-block text-xs font-mono font-bold px-3 py-1 rounded-full bg-radar-amber/15 text-amber-300 border border-radar-amber/40">
+                ● PENDIENTE DE VERIFICACIÓN
+              </div>
+            </div>
+
+            <!-- ACCIÓN A PREPARAR -->
+            <div>
+              <label class="block text-xs font-mono uppercase tracking-wider text-radar-muted mb-2">¿Qué preparo?</label>
+              <div class="space-y-2">
+                <label class="flex items-start gap-3 p-3 rounded-xl bg-[#0C1530] border border-radar-line hover:border-radar-lineLight cursor-pointer transition-all">
+                  <input type="radio" name="copiloto-accion" value="resumen" checked class="mt-0.5 accent-radar-amber">
+                  <div>
+                    <span class="block text-xs font-semibold text-white">📄 Resumen ejecutivo y cronología</span>
+                    <span class="block text-[11px] text-radar-muted mt-0.5">Ficha de síntesis probatoria para la redacción.</span>
+                  </div>
+                </label>
+                <label class="flex items-start gap-3 p-3 rounded-xl bg-[#0C1530] border border-radar-line hover:border-radar-lineLight cursor-pointer transition-all">
+                  <input type="radio" name="copiloto-accion" value="foia" class="mt-0.5 accent-radar-amber">
+                  <div>
+                    <span class="block text-xs font-semibold text-white">⚖️ Pedido de Acceso a la Información (FOIA)</span>
+                    <span class="block text-[11px] text-radar-muted mt-0.5">Borrador formal bajo Ley 104 CABA / Ley Nac. 27.275.</span>
+                  </div>
+                </label>
+                <label class="flex items-start gap-3 p-3 rounded-xl bg-[#0C1530] border border-radar-line hover:border-radar-lineLight cursor-pointer transition-all">
+                  <input type="radio" name="copiloto-accion" value="red" class="mt-0.5 accent-radar-amber">
+                  <div>
+                    <span class="block text-xs font-semibold text-white">📊 Análisis de red de competidores</span>
+                    <span class="block text-[11px] text-radar-muted mt-0.5">Mapeo de ternas y vínculos societarios recurrentes.</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <button onclick="ejecutarAgente()" id="btn-ejecutar-agente"
+              class="w-full py-3 px-4 rounded-xl bg-radar-amber hover:bg-radar-amberHover text-slate-950 font-bold font-mono text-sm flex items-center justify-center gap-2 transition-all shadow-md shadow-radar-amber/20">
+              <span>▶</span>
+              <span>Ejecutar agente</span>
+            </button>
+          </div>
+
+          <!-- PANEL DERECHO: VISOR DE EJECUCIÓN & RESULTADO -->
+          <div class="lg:col-span-7 space-y-4">
+
+            <!-- TIMELINE VISUAL DEL AGENTE -->
+            <div class="bg-[#05080F] border border-radar-line rounded-2xl overflow-hidden font-mono text-xs shadow-xl">
+              <div class="bg-[#0F172A] py-2.5 px-4 border-b border-radar-line flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
+                  <span class="text-radar-muted text-xs ml-2">rastro-agent — trazabilidad de razonamiento</span>
+                </div>
+                <span id="agent-status-label" class="text-[10px] text-radar-muted">IDLE</span>
+              </div>
+              <div id="terminal-body" class="p-4 space-y-2.5 text-slate-300 leading-relaxed min-h-[220px]">
+                <div class="text-slate-500">// Esperando instrucción. Seleccioná un caso y hacé clic en "Ejecutar agente".</div>
+              </div>
+            </div>
+
+            <!-- RESULTADO DINÁMICO (BORRADOR O FICHA) -->
+            <div id="copiloto-output-container" class="hidden">
+              <!-- Rendered via JS -->
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================== -->
+      <!-- TAB 4: MODO CÍVICO -->
+      <!-- ====================================================================== -->
+      <section id="tab-civico" class="hidden space-y-6">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-radar-amber font-bold">Modo Cívico</span>
+          <h3 class="text-2xl font-bold text-white mt-1">Abierto y gratuito: cualquier vecino entiende cómo se gasta en su barrio</h3>
+          <p class="text-sm text-radar-muted mt-1">
+            Ejemplos ilustrativos de Tarjetas Ciudadanas. Los indicios son públicos; las historias solo salen con verificación humana.
+          </p>
+        </div>
+
+        <!-- 3 STORY CARDS (Clean Dark Theme - sin flashazo blanco) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+          <!-- CARD 1 -->
+          <div class="bg-gradient-to-b from-radar-panel2 to-radar-panel border border-radar-line border-t-4 border-t-radar-amber rounded-2xl p-5 flex flex-col justify-between hover:border-radar-amber/60 transition-all shadow-lg">
+            <div>
+              <span class="text-[11px] font-mono uppercase tracking-wider text-radar-muted font-bold block mb-1">📍 Comuna 4 · ejemplo</span>
+              <h4 class="text-lg font-bold text-white mb-2">Bacheo de calles del barrio</h4>
+              <div class="text-3xl font-mono font-extrabold text-radar-amber mb-3">$ 120 M</div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Es lo que se pagó este año por arreglar baches en tu comuna.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-radar-line">
+              <div class="text-[11px] text-radar-muted mb-2">Ganó: <b class="text-white">Empresa X</b> · compitieron 3 empresas</div>
+              <span class="inline-block text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800">
+                ✓ Sin indicios de anomalía
+              </span>
+            </div>
+          </div>
+
+          <!-- CARD 2 -->
+          <div class="bg-gradient-to-b from-radar-panel2 to-radar-panel border border-radar-line border-t-4 border-t-amber-500 rounded-2xl p-5 flex flex-col justify-between hover:border-amber-400 transition-all shadow-lg">
+            <div>
+              <span class="text-[11px] font-mono uppercase tracking-wider text-radar-muted font-bold block mb-1">📍 Comuna 7 · ejemplo</span>
+              <h4 class="text-lg font-bold text-white mb-2">Mantenimiento de escuelas</h4>
+              <div class="text-3xl font-mono font-extrabold text-amber-400 mb-3">$ 45 M</div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Se contrató a una sola empresa con un plazo de solo 48 horas para presentar ofertas.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-radar-line">
+              <div class="text-[11px] text-radar-muted mb-2">Ganó: <b class="text-white">Empresa Y</b> · se presentó 1 sola empresa</div>
+              <span class="inline-block text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-700">
+                ● Indicio en revisión periodística
+              </span>
+            </div>
+          </div>
+
+          <!-- CARD 3 -->
+          <div class="bg-gradient-to-b from-radar-panel2 to-radar-panel border border-radar-line border-t-4 border-t-radar-amber rounded-2xl p-5 flex flex-col justify-between hover:border-radar-amber/60 transition-all shadow-lg">
+            <div>
+              <span class="text-[11px] font-mono uppercase tracking-wider text-radar-muted font-bold block mb-1">📍 Comuna 1 · ejemplo</span>
+              <h4 class="text-lg font-bold text-white mb-2">Iluminación de plazas</h4>
+              <div class="text-3xl font-mono font-extrabold text-radar-amber mb-3">$ 18 M</div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Tres empresas compitieron en licitación abierta y ganó la oferta más baja. Podés ver el contrato completo.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-radar-line">
+              <div class="text-[11px] text-radar-muted mb-2">Ganó: <b class="text-white">Empresa Z</b> · compitieron 3 empresas</div>
+              <span class="inline-block text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800">
+                ✓ Sin indicios de anomalía
+              </span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- EXPLICATORY TABLE -->
+        <div class="bg-radar-panel border border-radar-line rounded-2xl overflow-hidden mt-6 shadow-sm">
+          <div class="px-5 py-4 border-b border-radar-line">
+            <h4 class="text-sm font-bold text-white uppercase font-mono tracking-wider">Niveles de Transparencia y Acceso en Rastro</h4>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs sm:text-sm font-sans">
+              <thead class="bg-[#0C1530] text-radar-muted font-mono text-xs uppercase border-b border-radar-line">
+                <tr>
+                  <th class="py-3 px-4">Nivel</th>
+                  <th class="py-3 px-4">Quién participa</th>
+                  <th class="py-3 px-4">Qué puede hacer</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-radar-line text-slate-200">
+                <tr class="hover:bg-radar-panel2/50 transition-colors">
+                  <td class="py-3 px-4 font-bold text-radar-amber font-mono">Abierto</td>
+                  <td class="py-3 px-4">Cualquier ciudadano</td>
+                  <td class="py-3 px-4 text-radar-muted">Consultar contratos y ver indicios con la regla y el expediente que los respaldan.</td>
+                </tr>
+                <tr class="hover:bg-radar-panel2/50 transition-colors">
+                  <td class="py-3 px-4 font-bold text-radar-emerald font-mono">Verificación</td>
+                  <td class="py-3 px-4">Periodistas, OSCs y comunidad acreditada</td>
+                  <td class="py-3 px-4 text-radar-muted">Aprobar o descartar indicios, añadir notas de campo y habilitar la generación de notas.</td>
+                </tr>
+                <tr class="hover:bg-radar-panel2/50 transition-colors">
+                  <td class="py-3 px-4 font-bold text-indigo-400 font-mono">Institucional</td>
+                  <td class="py-3 px-4">Salas de redacción, ONGs, órganos de control</td>
+                  <td class="py-3 px-4 text-radar-muted">Monitoreo continuo de licitaciones en tiempo real, alertas de compras de urgencia y API.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
   </main>
 
-  <!-- FOOTER -->
-  <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 font-mono">
-    RASTRO — Proyecto desarrollado por Giovanny Flores (México) & Gabo para Media Party Buenos Aires 2026.
-    <br>Alimentado por OpenARG MCP (+33.000 datasets oficiales de Argentina).
-  </footer>
-
+  <!-- JAVASCRIPT STATE & INTERACTIONS -->
   <script>
+    // ESTADO DE LOS CASOS (sincronizado con backend/streamlit_app.py)
     const CASOS_DATA = {
       'A': {
+        codigo: 'RST-CABA-A-001',
         nombre: 'Proveedor A — sector salud',
-        patron: 'En la mayoría de sus concursos compite contra la misma terna de distribuidoras, que pierden por márgenes mínimos.',
         regla: 'Competencia recurrente: mismo grupo de oferentes en 3 o más procedimientos.',
         organismo: 'Ministerio de Salud CABA / Hospitales Públicos',
-        fuente: 'raw.caba__buenos_aires_compras__d09720af__v2'
+        fuente: 'raw.caba__buenos_aires_compras__d09720af__v2',
+        patron: 'En la mayoría de sus concursos compite contra la misma terna de distribuidoras, que pierden por márgenes mínimos.',
+        estado: 'Pendiente',
+        nota: ''
       },
       'B': {
+        codigo: 'RST-CABA-B-002',
         nombre: 'Proveedor B — servicios urbanos',
-        patron: 'Varios expedientes con menos de 48 horas hábiles entre la publicación y la apertura de sobres, con un solo oferente.',
         regla: 'Plazo corto: menos de 3 días hábiles entre convocatoria y apertura.',
         organismo: 'Ministerio de Espacio Público CABA',
-        fuente: 'raw.caba__buenos_aires_compras__d09720af__v2'
+        fuente: 'raw.caba__buenos_aires_compras__d09720af__v2',
+        patron: 'Varios expedientes con menos de 48 horas hábiles entre la publicación y la apertura de sobres, con un solo oferente presentado.',
+        estado: 'Pendiente',
+        nota: ''
       },
       'C': {
+        codigo: 'RST-CABA-C-003',
         nombre: 'Proveedores C y D — obra vial',
-        patron: 'Dos empresas que compiten entre sí en licitaciones de pavimentación comparten teléfono comercial en el registro de proveedores.',
-        regla: 'Vínculo registral: oferentes del mismo procedimiento con domicilio, teléfono o apoderado en común.',
+        regla: 'Vínculo registral: oferentes del mismo procedimiento con domicilio, teléfono o apoderado común.',
         organismo: 'Dirección General de Obras Viales',
-        fuente: 'Registro de Proveedores BAC'
+        fuente: 'Registro de Proveedores BAC',
+        patron: 'Dos empresas que compiten entre sí en licitaciones de pavimentación comparten teléfono comercial en el registro de proveedores.',
+        estado: 'Pendiente',
+        nota: ''
       }
     };
 
-    const decisiones = {
-      'A': { estado: 'Pendiente', nota: '' },
-      'B': { estado: 'Pendiente', nota: '' },
-      'C': { estado: 'Pendiente', nota: '' }
-    };
-
-    function setDecision(id, nuevoEstado) {
-      decisiones[id].estado = nuevoEstado;
-      
-      const badge = document.getElementById('badge-estado-' + id);
-      const feedback = document.getElementById('feedback-' + id);
-      
-      ['Pendiente', 'Aprobado', 'Descartado'].forEach(st => {
-        const btn = document.getElementById(`btn-${id}-${st}`);
-        btn.classList.remove('bg-emerald-600', 'bg-rose-600', 'bg-slate-700', 'text-white');
+    // CAMBIO DE TABS
+    function switchTab(tabId) {
+      const tabs = ['radar', 'explorador', 'copiloto', 'civico'];
+      tabs.forEach(t => {
+        const section = document.getElementById('tab-' + t);
+        const btn = document.getElementById('tab-btn-' + t);
+        if (t === tabId) {
+          section.classList.remove('hidden');
+          btn.classList.add('tab-active');
+          btn.classList.remove('border-transparent');
+        } else {
+          section.classList.add('hidden');
+          btn.classList.remove('tab-active');
+          btn.classList.add('border-transparent');
+        }
       });
+      if (tabId === 'explorador') {
+        renderChart();
+      }
+    }
+
+    // ACTUALIZACIÓN DE NOTA
+    function updateCaseNote(id, text) {
+      CASOS_DATA[id].nota = text;
+    }
+
+    // DECISIÓN EDITORIAL (PUERTA HUMANA)
+    function setCaseDecision(id, nuevoEstado) {
+      CASOS_DATA[id].estado = nuevoEstado;
+
+      const badge = document.getElementById(`badge-caso-${id}`);
+      const card = document.getElementById(`card-caso-${id}`);
 
       if (nuevoEstado === 'Aprobado') {
-        badge.className = 'text-xs px-2.5 py-0.5 rounded-full font-semibold bg-emerald-100 text-emerald-800';
-        badge.innerText = 'Estado: Aprobado por periodista';
-        feedback.innerText = '✅ Aprobado: ya se puede generar la ficha de investigación en el Copiloto.';
-        feedback.className = 'text-xs text-emerald-600 mt-2 font-medium';
-        document.getElementById(`btn-${id}-Aprobado`).classList.add('bg-emerald-600', 'text-white');
+        badge.className = 'text-xs font-mono font-bold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-radar-emerald/60';
+        badge.innerHTML = '✔ VERIFICADO POR PERIODISTA';
+        card.style.borderLeftColor = '#10B981';
       } else if (nuevoEstado === 'Descartado') {
-        badge.className = 'text-xs px-2.5 py-0.5 rounded-full font-semibold bg-rose-100 text-rose-800';
-        badge.innerText = 'Estado: Descartado';
-        feedback.innerText = '✕ Descartado: el Copiloto no generará fichas para este caso.';
-        feedback.className = 'text-xs text-rose-600 mt-2 font-medium';
-        document.getElementById(`btn-${id}-Descartado`).classList.add('bg-rose-600', 'text-white');
+        badge.className = 'text-xs font-mono font-bold px-3 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700';
+        badge.innerHTML = '✕ DESCARTADO';
+        card.style.borderLeftColor = '#64748B';
       } else {
-        badge.className = 'text-xs px-2.5 py-0.5 rounded-full font-semibold bg-slate-200 text-slate-700';
-        badge.innerText = 'Estado: Pendiente';
-        feedback.innerText = 'ℹ️ Pendiente: el Copiloto solo puede preparar solicitudes de acceso a la información.';
-        feedback.className = 'text-xs text-slate-500 mt-2';
-        document.getElementById(`btn-${id}-Pendiente`).classList.add('bg-slate-700', 'text-white');
+        badge.className = 'text-xs font-mono font-bold px-3 py-1 rounded-full bg-radar-amber/15 text-amber-300 border border-radar-amber/40';
+        badge.innerHTML = '● PENDIENTE DE VERIFICACIÓN';
+        card.style.borderLeftColor = '#F58220';
       }
 
-      updateStats();
-      updateCopilotoState();
+      updateCounters();
+      onCopilotoCasoChange();
     }
 
-    function saveNote(id) {
-      decisiones[id].nota = document.getElementById('nota-' + id).value;
+    // RECALCULAR CONTADORES KPI
+    function updateCounters() {
+      let aprobados = 0;
+      let descartados = 0;
+      let pendientes = 0;
+
+      for (let k in CASOS_DATA) {
+        if (CASOS_DATA[k].estado === 'Aprobado') aprobados++;
+        else if (CASOS_DATA[k].estado === 'Descartado') descartados++;
+        else pendientes++;
+      }
+
+      document.getElementById('kpi-pendientes').innerText = pendientes;
+      document.getElementById('kpi-verificados').innerText = aprobados;
+      document.getElementById('kpi-descartados').innerText = descartados;
     }
 
-    function updateStats() {
-      const aprobados = Object.values(decisiones).filter(d => d.estado === 'Aprobado').length;
-      const descartados = Object.values(decisiones).filter(d => d.estado === 'Descartado').length;
-      document.getElementById('stat-aprobados').innerText = aprobados;
-      document.getElementById('stat-descartados').innerText = descartados;
-    }
+    // EVENTO CUANDO CAMBIA EL CASO EN EL COPILOTO
+    function onCopilotoCasoChange() {
+      const select = document.getElementById('copiloto-caso-select');
+      const id = select.value;
+      const estado = CASOS_DATA[id].estado;
+      const badge = document.getElementById('copiloto-caso-badge');
 
-    function updateCopilotoState() {
-      const casoId = document.getElementById('casoSelect').value;
-      const est = decisiones[casoId].estado;
-      const badge = document.getElementById('copiloto-estado-badge');
-      badge.innerText = est;
-      if (est === 'Aprobado') {
-        badge.className = 'font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-mono';
-      } else if (est === 'Descartado') {
-        badge.className = 'font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-mono';
+      if (estado === 'Aprobado') {
+        badge.className = 'inline-block text-xs font-mono font-bold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-radar-emerald/60';
+        badge.innerHTML = '✔ VERIFICADO POR PERIODISTA';
+      } else if (estado === 'Descartado') {
+        badge.className = 'inline-block text-xs font-mono font-bold px-3 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700';
+        badge.innerHTML = '✕ DESCARTADO';
       } else {
-        badge.className = 'font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-800 font-mono';
+        badge.className = 'inline-block text-xs font-mono font-bold px-3 py-1 rounded-full bg-radar-amber/15 text-amber-300 border border-radar-amber/40';
+        badge.innerHTML = '● PENDIENTE DE VERIFICACIÓN';
       }
     }
 
-    function switchTab(tabName) {
-      ['alertas', 'ranking', 'copiloto', 'civico'].forEach(t => {
-        document.getElementById('tab-' + t).classList.add('hidden');
-        const btn = document.getElementById('tab-btn-' + t);
-        btn.classList.remove('border-brand-500', 'text-brand-500', 'font-semibold');
-        btn.classList.add('border-transparent', 'text-slate-500', 'font-medium');
-      });
-
-      document.getElementById('tab-' + tabName).classList.remove('hidden');
-      const activeBtn = document.getElementById('tab-btn-' + tabName);
-      activeBtn.classList.remove('border-transparent', 'text-slate-500', 'font-medium');
-      activeBtn.classList.add('border-brand-500', 'text-brand-500', 'font-semibold');
-
-      if (tabName === 'ranking' && !window.chartRendered) {
-        renderChart();
-        window.chartRendered = true;
+    // EJECUTAR AGENTE COPILOTO
+    async function ejecutarAgente() {
+      const select = document.getElementById('copiloto-caso-select');
+      const casoId = select.value;
+      const caso = CASOS_DATA[casoId];
+      const radios = document.getElementsByName('copiloto-accion');
+      let accion = 'resumen';
+      for (let r of radios) {
+        if (r.checked) accion = r.value;
       }
-      if (tabName === 'copiloto') {
-        updateCopilotoState();
+
+      const terminal = document.getElementById('terminal-body');
+      const statusLabel = document.getElementById('agent-status-label');
+      const outputContainer = document.getElementById('copiloto-output-container');
+
+      terminal.innerHTML = '';
+      statusLabel.innerHTML = '<span class="text-radar-amber animate-pulse">EJECUTANDO...</span>';
+      outputContainer.classList.add('hidden');
+
+      const isAprobado = caso.estado === 'Aprobado';
+      const isFoia = accion === 'foia';
+
+      const log = (text, type = 'dim') => {
+        const div = document.createElement('div');
+        if (type === 'cmd') div.className = 'text-radar-muted font-bold';
+        else if (type === 'info') div.className = 'text-amber-300';
+        else if (type === 'ok') div.className = 'text-emerald-400 font-bold';
+        else if (type === 'warn') div.className = 'text-amber-400';
+        else if (type === 'err') div.className = 'text-red-400 font-bold';
+        else div.className = 'text-slate-400';
+        div.innerHTML = text;
+        terminal.appendChild(div);
+      };
+
+      log(`$ rastro agent --caso ${caso.codigo} --accion ${accion}`, 'cmd');
+      await new Promise(r => setTimeout(r, 350));
+
+      log(`› Conectando con OpenARG MCP: ${caso.fuente}`, 'info');
+      await new Promise(r => setTimeout(r, 400));
+
+      log(`✔ Regla aplicada: ${caso.regla}`, 'ok');
+      await new Promise(r => setTimeout(r, 400));
+
+      log(`› Verificando protocolo ético: Puerta Humana...`, 'info');
+      await new Promise(r => setTimeout(r, 450));
+
+      if (isFoia) {
+        if (isAprobado) {
+          log(`✔ Indicio verificado por periodista`, 'ok');
+        } else {
+          log(`! Indicio pendiente: se autoriza borrador de Acceso a la Información para verificación`, 'warn');
+        }
+        await new Promise(r => setTimeout(r, 300));
+        log(`› Aplicando marco normativo: Ley 104 CABA / Ley Nac. 27.275`, 'info');
+        await new Promise(r => setTimeout(r, 300));
+        log(`✔ Borrador de solicitud generado con éxito`, 'ok');
+        statusLabel.innerHTML = '<span class="text-emerald-400">COMPLETADO</span>';
+
+        renderFoiaDraft(caso);
+      } else if (isAprobado) {
+        log(`✔ Verificado por periodista: Candado ético desbloqueado`, 'ok');
+        await new Promise(r => setTimeout(r, 350));
+        log(`› Sintetizando cronología y evidencia probatoria...`, 'info');
+        await new Promise(r => setTimeout(r, 350));
+        log(`✔ Ficha periodística lista (incluye derecho de réplica)`, 'ok');
+        statusLabel.innerHTML = '<span class="text-emerald-400">COMPLETADO</span>';
+
+        renderFichaVerificada(caso);
+      } else {
+        log(`✕ BLOQUEO ÉTICO ACTIVO: El indicio no cuenta con verificación humana`, 'err');
+        log(`  Por diseño metodológico, Rastro nunca genera hipótesis ni notas públicas sin la firma de un periodista.`, 'dim');
+        statusLabel.innerHTML = '<span class="text-red-400">BLOQUEADO POR PUERTA HUMANA</span>';
+
+        renderLockedGate(caso);
       }
     }
 
+    // RENDER: BLOQUEO ÉTICO
+    function renderLockedGate(caso) {
+      const container = document.getElementById('copiloto-output-container');
+      container.classList.remove('hidden');
+      container.innerHTML = `
+        <div class="bg-gradient-to-b from-radar-panel2 to-radar-panel border border-radar-amber/40 rounded-2xl p-6">
+          <div class="flex items-center gap-3 text-radar-amber mb-3">
+            <span class="text-2xl">🛡️</span>
+            <div>
+              <h4 class="font-bold text-base text-white">Escudo Ético de Integridad Periodística</h4>
+              <p class="text-xs text-amber-200/80">La generación automática está restringida para este caso.</p>
+            </div>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed mb-4">
+            Este indicio para <b>${caso.nombre}</b> está registrado como <span class="text-radar-amber font-mono font-bold">PENDIENTE</span>. Para evitar acusaciones infundadas o sesgos algorítmicos, el Copiloto no redactará borradores de noticias hasta que un periodista valide las fuentes en la pestaña <b>Radar de Indicios</b>.
+          </p>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="switchTab('radar')" class="text-xs font-mono font-bold px-3 py-2 rounded-lg bg-radar-amber text-slate-950 hover:bg-radar-amberHover transition-colors">
+              Ir a la Puerta Humana y Aprobar Indicio →
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // RENDER: BORRADOR FOIA
+    function renderFoiaDraft(caso) {
+      const container = document.getElementById('copiloto-output-container');
+      container.classList.remove('hidden');
+      const textoFoia = `A la Dirección General de Compras y Contrataciones del GCBA:
+
+REF: Solicitud de Información Pública en los términos de la Ley 104 de CABA / Ley Nacional 27.275.
+
+Por medio de la presente, en mi carácter de periodista, solicito se me brinde acceso a la siguiente información respecto a las contrataciones adjudicadas a ${caso.nombre}:
+
+1. Copia digital íntegra de los pliegos de bases y condiciones y actas de apertura de ofertas de los expedientes licitatorios del período 2024-2026.
+2. Detalle de los días hábiles otorgados entre la fecha de publicación en el Boletín Oficial y la fecha límite de presentación de ofertas en los procedimientos con regla: "${caso.regla}".
+3. Informar si se presentaron observaciones o impugnaciones por parte de otros oferentes respecto a las condiciones de concurrencia.
+
+Fundamento el presente pedido en el derecho a la información pública, la transparencia activa y el control cívico de los fondos públicos.
+
+Quedo a la espera de su respuesta dentro del plazo legal de 15 días hábiles.
+Atentamente.`;
+
+      container.innerHTML = `
+        <div class="bg-radar-panel border border-radar-line rounded-2xl p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">
+              ⚖️ Borrador de Pedido de Acceso a la Información (Ley 104 / 27.275)
+            </span>
+            <button onclick="copiarAlPortapapeles()" id="btn-copiar-foia" class="text-xs font-mono px-3 py-1 bg-radar-panel2 hover:bg-radar-amber hover:text-slate-950 text-slate-200 border border-radar-line rounded-md transition-colors">
+              Copiar texto
+            </button>
+          </div>
+          <textarea id="foia-textarea" rows="11" class="w-full bg-[#0C1530] border border-radar-line rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-radar-amber leading-relaxed scrollbar-thin">${textoFoia}</textarea>
+        </div>
+      `;
+    }
+
+    // RENDER: FICHA VERIFICADA
+    function renderFichaVerificada(caso) {
+      const container = document.getElementById('copiloto-output-container');
+      container.classList.remove('hidden');
+      const nota = caso.nota || 'Revisión técnica de pliegos completada. Indicio corroborado documentalmente.';
+
+      container.innerHTML = `
+        <div class="bg-gradient-to-b from-radar-panel2 to-radar-panel border border-radar-emerald rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono text-radar-muted">FICHA PERIODÍSTICA VALIDADA · ${caso.codigo}</span>
+            <span class="text-xs font-mono font-bold px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-radar-emerald/60">
+              ✔ VERIFICADO
+            </span>
+          </div>
+
+          <h4 class="text-lg font-bold text-white">${caso.nombre}</h4>
+          <p class="text-xs text-slate-300"><b>Patrón documental:</b> ${caso.patron}</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="bg-[#0C1530] border border-radar-line rounded-lg p-3">
+              <div class="text-[10px] font-mono uppercase text-radar-muted">Nota del periodista</div>
+              <div class="text-xs text-slate-200 mt-1 font-sans italic">${nota}</div>
+            </div>
+            <div class="bg-[#0C1530] border border-radar-line rounded-lg p-3">
+              <div class="text-[10px] font-mono uppercase text-radar-muted">Siguiente paso editorial</div>
+              <div class="text-xs text-amber-300 mt-1 font-sans">Pedir descargo a las empresas y al organismo (derecho de réplica) antes de publicar.</div>
+            </div>
+            <div class="bg-[#0C1530] border border-radar-line rounded-lg p-3">
+              <div class="text-[10px] font-mono uppercase text-radar-muted">Fuente OpenARG</div>
+              <div class="text-xs text-slate-300 font-mono mt-1 break-all">${caso.fuente}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function copiarAlPortapapeles() {
+      const textarea = document.getElementById('foia-textarea');
+      textarea.select();
+      document.execCommand('copy');
+      const btn = document.getElementById('btn-copiar-foia');
+      btn.innerText = '¡Copiado!';
+      setTimeout(() => btn.innerText = 'Copiar texto', 2000);
+    }
+
+    // CHART.JS INICIALIZACIÓN
+    let chartInstance = null;
     function renderChart() {
-      const ctx = document.getElementById('rankingChart').getContext('2d');
-      new Chart(ctx, {
+      if (chartInstance) return;
+      const ctx = document.getElementById('contractorsChart');
+      if (!ctx) return;
+
+      chartInstance = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: ['Droguería Comarsa', 'Droguería Varadero', 'Redimer S.A.', 'Medi Sistem SRL', 'Defensa del Sur S.A.'],
+          labels: [
+            'DROGUERIA COMARSA S.A.',
+            'DROGUERIA VARADERO S.A.',
+            'REDIMER S.A.',
+            'MEDI SISTEM S.R.L.',
+            'DEFENSA DEL SUR S.A.'
+          ],
           datasets: [{
-            label: 'Monto Total Adjudicado (Billones ARS)',
-            data: [3.42, 1.07, 0.44, 0.29, 0.22],
+            label: 'Monto Total Adjudicado (ARS)',
+            data: [3426795644514, 1072175964900, 440479447733, 297599358485, 222347837340],
             backgroundColor: '#F58220',
-            borderRadius: 6
+            borderRadius: 6,
+            barThickness: 24,
           }]
         },
         options: {
+          indexAxis: 'y',
           responsive: true,
+          maintainAspectRatio: false,
           plugins: {
-            legend: { display: false }
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return ' $ ' + context.raw.toLocaleString('es-AR');
+                }
+              }
+            }
           },
           scales: {
+            x: {
+              grid: { color: '#24335F' },
+              ticks: {
+                color: '#94A3B8',
+                font: { family: 'JetBrains Mono', size: 10 },
+                callback: function(val) {
+                  return '$ ' + (val / 1e9).toFixed(0) + ' B';
+                }
+              }
+            },
             y: {
-              beginAtZero: true,
-              ticks: { callback: v => '$' + v + ' B' }
+              grid: { display: false },
+              ticks: {
+                color: '#E2E8F0',
+                font: { family: 'Inter', size: 11, weight: '600' }
+              }
             }
           }
         }
       });
     }
 
-    function runAgent() {
-      const casoId = document.getElementById('casoSelect').value;
-      const caso = CASOS_DATA[casoId];
-      const decision = decisiones[casoId];
-      const accion = document.querySelector('input[name="agentAction"]:checked').value;
-      const out = document.getElementById('agentOutput');
-      const warning = document.getElementById('agentWarning');
-
-      if (accion === 'foia') {
-        warning.classList.add('hidden');
-        out.value = `A la Dirección General de Compras y Contrataciones del GCBA:\n\nREF: Solicitud de Información Pública en los términos de la Ley 104 de CABA / Ley Nacional 27.275.\n\nPor medio de la presente, en mi carácter de periodista, solicito se me brinde acceso a la siguiente información respecto a las contrataciones adjudicadas a ${caso.nombre}:\n\n1. Copia digital íntegra de los pliegos de bases y condiciones y actas de apertura de ofertas de los expedientes licitatorios del período 2024-2026.\n2. Detalle de los días hábiles otorgados entre la fecha de publicación en el Boletín Oficial y la fecha límite de presentación de ofertas en los concursos con plazo inferior a 72 horas.\n3. Informar si se presentaron observaciones o impugnaciones por parte de otros potenciales oferentes respecto a los plazos establecidos.\n\nFundamento el presente pedido en el derecho a la información pública, la transparencia activa y el control cívico de los fondos públicos.\n\nQuedo a la espera de su respuesta dentro del plazo legal de 15 días hábiles.\nAtentamente.`;
-      } else {
-        if (decision.estado !== 'Aprobado') {
-          warning.classList.remove('hidden');
-          out.value = `[ACCESO DENEGADO POR REGLA ÉTICA]\n\n🔒 El indicio seleccionado (${caso.nombre}) se encuentra en estado "${decision.estado}".\n\nRastro implementa una barrera ética estricta: la inteligencia artificial no genera hipótesis publicables ni fichas de acusación sin la aprobación previa de un periodista acreditado.\n\nPara desbloquear la ficha:\n1. Diríjase a la pestaña "Indicios & Puerta Humana".\n2. Realice la verificación previa y haga clic en "✓ Aprobar indicio".\n3. Agregue una nota de verificación metodológica.`;
-        } else {
-          warning.classList.add('hidden');
-          const nota = decision.nota ? decision.nota : 'Verificación documental completada sin notas adicionales.';
-          out.value = `📋 FICHA DE INVESTIGACIÓN VERIFICADA POR PERIODISTA\n\nCaso: ${caso.nombre}\nEstado: APROBADO POR PERIODISTA\nOrganismo: ${caso.organismo}\n\n• PATRÓN DETECTADO: ${caso.patron}\n• REGLA TÉCNICA: ${caso.regla}\n• NOTA DEL PERIODISTA: ${nota}\n\n• SIGUIENTE PASO METODOLÓGICO OBLIGATORIO:\nPedir la versión de las empresas y del organismo contratante (derecho de réplica y debido proceso) antes de cualquier publicación.\n\n• FUENTE DE DATOS PÚBLICOS:\nDataset oficial OpenARG: ${caso.fuente}`;
-        }
-      }
-    }
-
-    function copyDoc() {
-      const copyText = document.getElementById('agentOutput');
-      copyText.select();
-      navigator.clipboard.writeText(copyText.value);
-      alert('¡Documento copiado al portapapeles!');
-    }
+    // INICIALIZAR CONTADORES AL CARGAR
+    window.addEventListener('DOMContentLoaded', () => {
+      updateCounters();
+    });
   </script>
 </body>
 </html>
