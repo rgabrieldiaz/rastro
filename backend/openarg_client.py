@@ -11,8 +11,11 @@ import urllib.request
 from typing import Any, Dict, List, Optional
 from pathlib import Path
 
-# Cargar variables de entorno desde .env si existe
+# Cargar variables de entorno desde .env si existe (en backend/ o en la raiz)
 env_path = Path(__file__).resolve().parent / ".env"
+if not env_path.exists():
+    env_path = Path(__file__).resolve().parent.parent / ".env"
+
 if env_path.exists():
     with open(env_path) as f:
         for line in f:

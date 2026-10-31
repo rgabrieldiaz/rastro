@@ -21,10 +21,10 @@ The platform audits government procurement and public works to detect three prim
 
 ## 📂 Repository Structure
 - `index.html`: Main Web Application for Vercel deployment (Tailwind CSS, Chart.js).
-- `streamlit_app.py`: Streamlit prototype. Contains the 4 core tabs (Alerts Feed, Contractor Explorer, Agentic Copilot, Civic Mode).
-- `openarg_client.py`: Zero-dependency Python client for OpenARG MCP tools (accessing +33,000 Argentine public datasets).
-- `requirements.txt`: Python package dependencies.
 - `vercel.json`: Vercel deployment configuration.
+- `backend/streamlit_app.py`: Streamlit prototype. Contains the 4 core tabs (Alerts Feed, Contractor Explorer, Agentic Copilot, Civic Mode).
+- `backend/openarg_client.py`: Zero-dependency Python client for OpenARG MCP tools (accessing +33,000 Argentine public datasets).
+- `backend/requirements.txt`: Python package dependencies.
 - `.mcp.json`: MCP server configuration for OpenARG (`https://mcp.openarg.org/mcp`).
 - `.env.example`: Template for environment variables.
 - `docs/METODOLOGIA_RASTRO.md`: Full methodology and roadmap from less to more.
@@ -37,10 +37,10 @@ The platform audits government procurement and public works to detect three prim
 # Setup environment
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install -r backend/requirements.txt
 
 # Run the Streamlit web application
-streamlit run streamlit_app.py
+streamlit run backend/streamlit_app.py
 ```
 App will open at `http://localhost:8501`.
 
