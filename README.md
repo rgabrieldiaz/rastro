@@ -1,58 +1,66 @@
-# Media Party Buenos Aires 2026 — Hub del Equipo para la Hackatón
+# 🔍 RASTRO — Radar Agéntico de Integridad en Compras Públicas
 
-Bienvenido al repositorio central de preparación y desarrollo para la **Hackatón Media Party Buenos Aires 2026**.
-
-Este repositorio consolida toda la información oficial, análisis del ecosistema de competidores en Hackdash, lineamientos del jurado y estrategias de desarrollo de producto.
-
----
-
-## 📌 Datos Clave de la Hackatón
-
-- **Lema:** *«Storytelling en la era de los agentes»*
-- **Día y Horario:** Sábado 31 de octubre de 2026, de 11:00 a 18:00 hs (ART).
-- **Lugar:** Ciudad Cultural Konex (Sarmiento 3131, CABA, Argentina).
-- **Tablero Hackdash:** [hackdash.org/dashboards/mpba26](https://hackdash.org/dashboards/mpba26)
-- **Sitio Web Oficial:** [mediaparty.org/buenos-aires-2026-hackaton](https://mediaparty.org/buenos-aires-2026-hackaton/)
-- **Artículo de Convocatoria:** [Último llamado: Hackatón Media Party 2026](https://mediaparty.org/2026/10/30/hackaton-media-party-buenos-aires-2026-sabado-31/)
+> **Hackatón Media Party Buenos Aires 2026** — *«Storytelling en la era de los agentes»*  
+> **Equipo:** Giovanny Flores (Periodista de Investigación - México) & Gabo (Desarrollador / Arquitectura de IA)  
+> **Dashboard Oficial:** [hackdash.org/dashboards/mpba26](https://hackdash.org/dashboards/mpba26)  
+> **Lema:** *«La máquina encuentra indicios objetivos; el periodista investiga la historia.»*
 
 ---
 
-## 📂 Estructura de Documentación Generada
+## 📌 ¿Qué es Rastro?
 
-| Documento | Descripción y Contenido |
-| :--- | :--- |
-| 📘 [**Guía Oficial de la Hackatón**](file:///Users/gabo/Desktop/Proyectos/MediaParty26/hackathon_guia_oficial.md) | Cronograma en 3 etapas, IP Framework (100% creadores), los 4 ejes de innovación, criterios de evaluación del jurado internacional (The Guardian, Pulitzer Center, Google News Initiative, IFPIM, MDIF), y acceso al Media Party Investment Club. |
-| 📊 [**Proyectos en Hackdash**](file:///Users/gabo/Desktop/Proyectos/MediaParty26/hackdash_proyectos_actuales.md) | Detalle completo de los 5 proyectos registrados en tiempo real, integrantes, tags, objetivos, análisis del panorama competitivo y nichos vacantes. |
-| 💡 [**5 Ideas Evaluadas con OpenARG**](file:///Users/gabo/Desktop/Proyectos/MediaParty26/ideas_openarg_hackathon.md) | Las 5 propuestas de agentes potenciadas por +33.000 datasets oficiales de Argentina, puntuadas dimensión por dimensión con veredicto final. |
-| 🚀 [**Estrategia, Ideas y Playbook para Ganar**](file:///Users/gabo/Desktop/Proyectos/MediaParty26/estrategia_y_brainstorming.md) | Análisis de los ganadores de NY y Barcelona 2026, arquitectura técnica recomendada y la fórmula del Pitch final de 3 minutos. |
-| 🔌 [**Cliente Python OpenARG**](file:///Users/gabo/Desktop/Proyectos/MediaParty26/openarg_client.py) | Módulo listo para invocar las herramientas MCP de OpenARG directamente en Python (cero dependencias externas). |
-| 📁 `sources/` | Copias de respaldo en JSON y texto plano extraídas directamente de las APIs y webs oficiales. |
+**Rastro** es una plataforma agéntica que audita bases de datos de contrataciones gubernamentales para **ahorrarle semanas de reportería manual a periodistas de investigación**, detectando automáticamente señales de alerta (*red flags*) en compras públicas:
+
+1. **Concentración Anómala:** Proveedores que acumulan un porcentaje desproporcionado de contratos en un organismo.
+2. **Competencia Simulada (Bid Rigging):** Contratistas que en casi todas sus licitaciones compiten sistemáticamente contra los mismos 2 competidores de cortesía.
+3. **Coincidencias Registrales:** Empresas formalmente competidoras que comparten el mismo domicilio fiscal, teléfono o apoderados.
+
+Alimentado por **OpenARG MCP** con más de 107.000 contrataciones oficiales de CABA y 500.000 contratos históricos, Rastro no solo muestra datos: **entrega la prueba documental y redacta pedidos formales de acceso a la información pública en un clic.**
 
 ---
 
-## ⏱️ Cronograma de la Jornada (Sábado 31 de Octubre)
+## 🚀 Cómo Ejecutar la Web App
 
+```bash
+# 1. Clonar el repositorio
+git clone <URL_DEL_REPO>
+cd rastro
+
+# 2. Crear entorno virtual e instalar dependencias
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# 3. Iniciar la aplicación
+streamlit run app.py
 ```
-  11:00 hs ──► Etapa 01: Apertura, Pitches de Participantes y Reverse Pitching de Empresas
-  12:00 hs ──► Etapa 02: Conformación de Equipos y Desarrollo con Mentores (Sprint de código)
-  17:00 hs ──► Cierre de desarrollo / Freeze de prototipos
-  17:15 hs ──► Etapa 03: Demos en Vivo ante Jurado Internacional y Público
-  18:00 hs ──► Anuncio de Ganadores, Fast-Track a Aceleración y Cierre
+La aplicación se abrirá automáticamente en tu navegador en `http://localhost:8501`.
+
+---
+
+## 📂 Estructura del Proyecto
+
+```text
+├── app.py                      # Aplicación Web principal (Streamlit)
+├── openarg_client.py           # Cliente Python nativo para OpenARG MCP
+├── requirements.txt            # Dependencias del proyecto
+├── CLAUDE.md                   # Guía de contexto para asistentes de IA (Claude / Cursor)
+├── .mcp.json                   # Configuración del servidor MCP OpenARG
+├── docs/
+│   └── METODOLOGIA_RASTRO.md   # Metodología de investigación y tesis del proyecto
+├── hackathon_guia_oficial.md   # Reglas oficiales de Media Party 2026
+└── sources/                    # Datasets y respuestas JSON de respaldo
 ```
 
 ---
 
-## 🎯 Los 4 Ejes Temáticos (Tracks)
+## 🧭 Hoja de Ruta: De Menos a Más
 
-1. **Track 1: SaaS para Redacciones** — Automatización agéntica de tareas repetitivas (investigación, edición, distribución).
-2. **Track 2: Herramientas B2B de Integridad** — Verificación, trazabilidad de fuentes, detección de sesgos y deepfakes.
-3. **Track 3: Licencias Abiertas con Valor Agregado** — Prototipos *open-source* con modelos de servicios administrados o soporte corporativo.
-4. **Track 4: Plataformas de Monetización Comunitaria** — Mecanismos de sostenibilidad directa para medios independientes.
+1. **Fase 1 (MVP Hackatón - B2B Periodistas):** Feed de alertas de compras públicas, buscador de contratistas y copiloto que redacta pedidos de acceso a la información.
+2. **Fase 2 (Regional):** Integración de bases de datos de contrataciones de México (Compranet / PNT) y otras provincias argentinas.
+3. **Fase 3 (Modo Cívico para Ciudadanos):** Story cards visuales y accesibles para que cualquier vecino consulte qué obras se licitaron en su barrio.
 
 ---
 
-## 🛠️ Próximos Pasos Sugeridos para el Equipo
-
-1. [ ] **Definir la idea a desarrollar:** Revisar el archivo [estrategia_y_brainstorming.md](file:///Users/gabo/Desktop/Proyectos/MediaParty26/estrategia_y_brainstorming.md) y elegir o adaptar un concepto.
-2. [ ] **Registrar el proyecto en Hackdash:** Entrar a [hackdash.org/dashboards/mpba26](https://hackdash.org/dashboards/mpba26), crear la ficha del proyecto y vincular a los miembros del equipo.
-3. [ ] **Levantar el boilerplate técnico:** Configurar el entorno de desarrollo local con los modelos de IA y la interfaz elegida.
+## ⚖️ Licencia y Propiedad Intelectual
+Desarrollado bajo el marco de propiedad intelectual de Media Party 2026: 100% soberanía de los creadores (Open Source / MIT License sugerida).
