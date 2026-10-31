@@ -11,7 +11,7 @@
 ## 👥 Equipo (Media Party BA 2026)
 
 * **Giovanny Flores** (México) — Líder Editorial, Periodista de Datos e Investigación (*Criterio Hidalgo*). Metodología de auditoría, definición de banderas rojas y pitch.
-* **Gabo** (Argentina) — Desarrollo, Arquitectura de IA, Conexión OpenARG MCP e Interfaz Web.
+* **Ricardo Gabriel Diaz** (Argentina) — Desarrollo, Arquitectura de IA, Conexión OpenARG MCP e Interfaz Web.
 * **Marsetti** — Desarrollo, Infraestructura y Colaboración Técnica.
 
 ---

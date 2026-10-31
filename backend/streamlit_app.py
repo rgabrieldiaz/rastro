@@ -1,7 +1,7 @@
 """
 RASTRO — Radar Agéntico de Integridad en Compras Públicas
 Media Party Buenos Aires 2026
-Metodología: Giovanny Flores (México) & Gabo
+Metodología: Giovanny Flores (México) & Ricardo Gabriel Diaz (Argentina)
 Alimentado por datos públicos oficiales vía OpenARG MCP
 """
 
@@ -177,7 +177,7 @@ with st.sidebar:
     )
     st.divider()
     st.markdown("**Metodología:** Giovanny Flores (México)")
-    st.markdown("**Desarrollo & OpenARG:** Gabo")
+    st.markdown("**Desarrollo & OpenARG:** Ricardo Gabriel Diaz (Argentina)")
     st.caption("Media Party Buenos Aires 2026")
 
 # ==============================================================================
