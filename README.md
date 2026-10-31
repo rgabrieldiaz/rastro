@@ -12,7 +12,7 @@
 
 * **Giovanny Flores** (México) — Líder Editorial, Periodista de Datos e Investigación (*Criterio Hidalgo*). Metodología de auditoría, definición de banderas rojas y pitch.
 * **Ricardo Gabriel Diaz** (Argentina) — Desarrollo, Arquitectura de IA, Conexión OpenARG MCP e Interfaz Web.
-* **Marsetti** — Desarrollo, Infraestructura y Colaboración Técnica.
+* **Pedro Lionel Marsetti** (Argentina) — Desarrollo, Infraestructura y Colaboración Técnica.
 
 ---
 

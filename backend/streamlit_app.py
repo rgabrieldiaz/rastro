@@ -178,6 +178,7 @@ with st.sidebar:
     st.divider()
     st.markdown("**Metodología:** Giovanny Flores (México)")
     st.markdown("**Desarrollo & OpenARG:** Ricardo Gabriel Diaz (Argentina)")
+    st.markdown("**Colaboración Técnica:** Pedro Lionel Marsetti (Argentina)")
     st.caption("Media Party Buenos Aires 2026")
 
 # ==============================================================================
