@@ -23,7 +23,7 @@ Alimentado por **OpenARG MCP** con más de 107.000 contrataciones oficiales de C
 
 ```bash
 # 1. Clonar el repositorio
-git clone <URL_DEL_REPO>
+git clone < (https://github.com/rgabrieldiaz/rastro)>
 cd rastro
 
 # 2. Crear entorno virtual e instalar dependencias
