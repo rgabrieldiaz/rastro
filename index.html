@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RASTRO — Radar Agéntico de Integridad en Compras Públicas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#FFF7ED',
+              100: '#FFEDD5',
+              500: '#F58220',
+              600: '#EA580C',
+              900: '#0E263D',
+              950: '#081726',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+  <!-- NAVBAR -->
+  <header class="bg-brand-950 text-white border-b border-slate-800 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 bg-brand-500 rounded-lg flex items-center justify-center font-bold text-white shadow-md">
+          R
+        </div>
+        <div>
+          <span class="text-xl font-extrabold tracking-tight">RASTRO</span>
+          <span class="text-xs bg-slate-800 text-brand-500 font-mono px-2 py-0.5 rounded ml-2 border border-slate-700">BETA v0.2</span>
+        </div>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span class="hidden md:inline-flex text-xs text-slate-400 font-mono">
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 mr-2 animate-pulse self-center"></span>
+          OpenARG MCP: 107.441 contrataciones
+        </span>
+        <span class="text-xs bg-brand-500/20 text-brand-500 border border-brand-500/30 px-3 py-1 rounded-full font-medium">
+          Media Party BA 2026
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="bg-brand-900 text-white py-10 px-4 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto">
+      <div class="max-w-3xl">
+        <p class="text-brand-500 font-mono text-sm uppercase tracking-wider mb-2 font-semibold">// Radar Agéntico de Compras Públicas</p>
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3">
+          Auditoría de Integridad y Licitaciones
+        </h1>
+        <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+          La máquina detecta indicios objetivos de concentración, plazos exprés y competencia simulada; el periodista investiga la historia y decide.
+        </p>
+      </div>
+
+      <!-- STATS BAR -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-6 border-t border-slate-800/80">
+        <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-800">
+          <div class="text-slate-400 text-xs font-medium uppercase font-mono">Contratos Auditados</div>
+          <div class="text-2xl font-bold text-white mt-1">107.441</div>
+          <div class="text-xs text-emerald-400 mt-1">✓ Buenos Aires Compras</div>
+        </div>
+        <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-800">
+          <div class="text-slate-400 text-xs font-medium uppercase font-mono">Alertas de Concentración</div>
+          <div class="text-2xl font-bold text-amber-400 mt-1">14 activas</div>
+          <div class="text-xs text-slate-400 mt-1">Monto > $100M ARS</div>
+        </div>
+        <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-800">
+          <div class="text-slate-400 text-xs font-medium uppercase font-mono">Posibles Carteles</div>
+          <div class="text-2xl font-bold text-rose-400 mt-1">6 ternas</div>
+          <div class="text-xs text-slate-400 mt-1">Co-participación > 75%</div>
+        </div>
+        <div class="bg-slate-900/60 p-4 rounded-lg border border-slate-800">
+          <div class="text-slate-400 text-xs font-medium uppercase font-mono">Licitaciones Exprés</div>
+          <div class="text-2xl font-bold text-sky-400 mt-1">28 casos</div>
+          <div class="text-xs text-slate-400 mt-1">Plazo < 72 horas hábiles</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NAVIGATION TABS -->
+  <div class="bg-white border-b border-slate-200 sticky top-16 z-40 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 flex space-x-8">
+      <button onclick="switchTab('alertas')" id="tab-btn-alertas" class="py-4 px-1 border-b-2 border-brand-500 font-semibold text-brand-500 text-sm flex items-center space-x-2">
+        <span>🚨</span>
+        <span>Alertas Tempranas</span>
+      </button>
+      <button onclick="switchTab('ranking')" id="tab-btn-ranking" class="py-4 px-1 border-b-2 border-transparent font-medium text-slate-500 hover:text-slate-800 text-sm flex items-center space-x-2">
+        <span>📊</span>
+        <span>Ranking de Contratistas</span>
+      </button>
+      <button onclick="switchTab('copiloto')" id="tab-btn-copiloto" class="py-4 px-1 border-b-2 border-transparent font-medium text-slate-500 hover:text-slate-800 text-sm flex items-center space-x-2">
+        <span>🤖</span>
+        <span>Copiloto de Investigación (IA)</span>
+      </button>
+      <button onclick="switchTab('civico')" id="tab-btn-civico" class="py-4 px-1 border-b-2 border-transparent font-medium text-slate-500 hover:text-slate-800 text-sm flex items-center space-x-2">
+        <span>👥</span>
+        <span>Modo Cívico</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+
+    <!-- TAB 1: FEED DE ALERTAS -->
+    <section id="tab-alertas" class="space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Señales de Alerta Activas</h2>
+          <p class="text-sm text-slate-500">Casos identificados por los algoritmos de detección sobre contrataciones públicas de CABA.</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <select class="text-sm border border-slate-300 rounded-lg px-3 py-1.5 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
+            <option>Filtrar: Todos los organismos</option>
+            <option>Ministerio de Salud</option>
+            <option>Ministerio de Espacio Público</option>
+            <option>Obras Viales</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- CARD 1 -->
+      <article class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow transition-all border-l-4 border-l-rose-500">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div class="flex items-center space-x-2">
+            <span class="bg-rose-100 text-rose-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">Alerta Colusión Recurrente</span>
+            <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">Concentración Salud</span>
+          </div>
+          <span class="text-xs text-slate-400 font-mono">Fuente: raw.caba__buenos_aires_compras</span>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 mb-2">
+          Droguería Comarsa S.A. — Co-participación sistemática con terna fija
+        </h3>
+        <p class="text-sm text-slate-600 leading-relaxed mb-4">
+          En <b>9.568 contratos adjudicados</b> en el sector salud (totalizando más de $3.4 billones de pesos), el sistema identificó que en el <b>78% de los concursos</b> compite de forma recurrente contra una misma terna de firmas distribuidoras con ofertas desestimadas por márgenes mínimos.
+        </p>
+        <div class="bg-slate-50 rounded-lg p-3 text-xs font-mono text-slate-700 flex flex-wrap gap-4 border border-slate-200">
+          <div><span class="text-slate-400">Organismo:</span> Ministerio de Salud CABA / Hospitales Públicos</div>
+          <div><span class="text-slate-400">Monto Acumulado:</span> $3.426.795 M ARS</div>
+          <div><span class="text-slate-400">Índice de Alerta:</span> <span class="font-bold text-rose-600">8.8 / 10</span></div>
+        </div>
+        <div class="mt-4 flex items-center justify-between pt-3 border-t border-slate-100">
+          <button onclick="switchTab('copiloto')" class="text-xs font-semibold text-brand-600 hover:text-brand-500 flex items-center space-x-1">
+            <span>Analizar con el Copiloto de IA &rarr;</span>
+          </button>
+          <span class="text-xs text-slate-400">ID OCDS: ocid-bac-comarsa-2025</span>
+        </div>
+      </article>
+
+      <!-- CARD 2 -->
+      <article class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow transition-all border-l-4 border-l-sky-500">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div class="flex items-center space-x-2">
+            <span class="bg-sky-100 text-sky-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">Alerta Plazo Exprés</span>
+            <span class="bg-purple-100 text-purple-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">Contratación Directa</span>
+          </div>
+          <span class="text-xs text-slate-400 font-mono">Fuente: BAC Contracts</span>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 mb-2">
+          Corporación para la Defensa del Sur S.A. — Apertura en menos de 48 horas
+        </h3>
+        <p class="text-sm text-slate-600 leading-relaxed mb-4">
+          60 contrataciones por un monto acumulado de <b>$222.347 millones</b>. Se detectaron <b>14 expedientes con una ventana de publicación inferior a 48 horas hábiles</b> entre la publicación del pliego y la apertura de sobres, con un único oferente presentado.
+        </p>
+        <div class="bg-slate-50 rounded-lg p-3 text-xs font-mono text-slate-700 flex flex-wrap gap-4 border border-slate-200">
+          <div><span class="text-slate-400">Organismo:</span> Ministerio de Espacio Público</div>
+          <div><span class="text-slate-400">Monto Acumulado:</span> $222.347 M ARS</div>
+          <div><span class="text-slate-400">Índice de Alerta:</span> <span class="font-bold text-sky-600">9.1 / 10</span></div>
+        </div>
+        <div class="mt-4 flex items-center justify-between pt-3 border-t border-slate-100">
+          <button onclick="switchTab('copiloto')" class="text-xs font-semibold text-brand-600 hover:text-brand-500 flex items-center space-x-1">
+            <span>Redactar Pedido de Acceso a Información &rarr;</span>
+          </button>
+          <span class="text-xs text-slate-400">ID OCDS: ocid-bac-defensasur-2025</span>
+        </div>
+      </article>
+
+      <!-- CARD 3 -->
+      <article class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow transition-all border-l-4 border-l-amber-500">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div class="flex items-center space-x-2">
+            <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">Vínculo Registral Cruzado</span>
+            <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase font-mono">Obras Viales</span>
+          </div>
+          <span class="text-xs text-slate-400 font-mono">Fuente: Registro Proveedores BAC</span>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 mb-2">
+          Constructora Vial Norte S.A. & Servicios Urbanos Integrales SRL
+        </h3>
+        <p class="text-sm text-slate-600 leading-relaxed mb-4">
+          Dos firmas formalmente competidoras en licitaciones de pavimentación y bacheo comparten el mismo número de teléfono comercial registrado en la base de datos de proveedores y apoderados con vínculo societario cruzado.
+        </p>
+        <div class="bg-slate-50 rounded-lg p-3 text-xs font-mono text-slate-700 flex flex-wrap gap-4 border border-slate-200">
+          <div><span class="text-slate-400">Organismo:</span> Dirección General de Obras Viales</div>
+          <div><span class="text-slate-400">Coincidencia:</span> Teléfono comercial & Apoderado común</div>
+          <div><span class="text-slate-400">Índice de Alerta:</span> <span class="font-bold text-amber-600">8.4 / 10</span></div>
+        </div>
+        <div class="mt-4 flex items-center justify-between pt-3 border-t border-slate-100">
+          <button onclick="switchTab('copiloto')" class="text-xs font-semibold text-brand-600 hover:text-brand-500 flex items-center space-x-1">
+            <span>Explorar red societaria &rarr;</span>
+          </button>
+          <span class="text-xs text-slate-400">ID OCDS: ocid-bac-vialnorte-2025</span>
+        </div>
+      </article>
+    </section>
+
+    <!-- TAB 2: RANKING -->
+    <section id="tab-ranking" class="hidden space-y-6">
+      <div>
+        <h2 class="text-xl font-bold text-slate-900">Mayores Contratistas de CABA</h2>
+        <p class="text-sm text-slate-500">Calculado directamente en el servidor de OpenARG sobre 107.441 filas de compras públicas.</p>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        <canvas id="rankingChart" height="110"></canvas>
+      </div>
+
+      <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+        <table class="min-w-full divide-y divide-slate-200 text-sm">
+          <thead class="bg-slate-50 text-slate-500 font-mono text-xs uppercase">
+            <tr>
+              <th class="px-6 py-3 text-left font-semibold">Contratista</th>
+              <th class="px-6 py-3 text-right font-semibold">Monto Total ($ ARS)</th>
+              <th class="px-6 py-3 text-right font-semibold">Contratos</th>
+              <th class="px-6 py-3 text-center font-semibold">Riesgo / Alerta</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 text-slate-700">
+            <tr>
+              <td class="px-6 py-4 font-semibold text-slate-900">DROGUERIA COMARSA S.A.</td>
+              <td class="px-6 py-4 text-right font-mono">$3.426.795 M</td>
+              <td class="px-6 py-4 text-right font-mono">9.568</td>
+              <td class="px-6 py-4 text-center"><span class="bg-rose-100 text-rose-800 text-xs px-2 py-0.5 rounded font-mono font-bold">ALTA (8.8)</span></td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 font-semibold text-slate-900">DROGUERIA VARADERO S.A.</td>
+              <td class="px-6 py-4 text-right font-mono">$1.072.175 M</td>
+              <td class="px-6 py-4 text-right font-mono">3.401</td>
+              <td class="px-6 py-4 text-center"><span class="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded font-mono font-bold">MEDIA (6.5)</span></td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 font-semibold text-slate-900">REDIMER S.A.</td>
+              <td class="px-6 py-4 text-right font-mono">$440.479 M</td>
+              <td class="px-6 py-4 text-right font-mono">184</td>
+              <td class="px-6 py-4 text-center"><span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded font-mono font-bold">BAJA (3.2)</span></td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 font-semibold text-slate-900">MEDI SISTEM S.R.L.</td>
+              <td class="px-6 py-4 text-right font-mono">$297.599 M</td>
+              <td class="px-6 py-4 text-right font-mono">3.770</td>
+              <td class="px-6 py-4 text-center"><span class="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded font-mono font-bold">MEDIA (5.9)</span></td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 font-semibold text-slate-900">CORPORACION PARA LA DEFENSA DEL SUR S.A.</td>
+              <td class="px-6 py-4 text-right font-mono">$222.347 M</td>
+              <td class="px-6 py-4 text-right font-mono">60</td>
+              <td class="px-6 py-4 text-center"><span class="bg-rose-100 text-rose-800 text-xs px-2 py-0.5 rounded font-mono font-bold">ALTA (9.1)</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 3: COPILOTO AGÉNTICO -->
+    <section id="tab-copiloto" class="hidden space-y-6">
+      <div>
+        <h2 class="text-xl font-bold text-slate-900">Copiloto Agéntico para el Periodista</h2>
+        <p class="text-sm text-slate-500">El asistente genera automáticamente la hipótesis de investigación y el borrador legal para solicitar información oficial.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+          <label class="block text-sm font-semibold text-slate-800">Seleccionar Caso de Investigación:</label>
+          <select id="casoSelect" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm bg-white focus:ring-2 focus:ring-brand-500">
+            <option value="defensa">Corporación para la Defensa del Sur S.A. (Plazos < 48h)</option>
+            <option value="comarsa">Droguería Comarsa S.A. (Colusión recurrente)</option>
+            <option value="vial">Constructora Vial Norte S.A. (Teléfono compartido)</option>
+          </select>
+
+          <label class="block text-sm font-semibold text-slate-800 pt-2">Acción Requerida al Agente:</label>
+          <div class="space-y-2 text-sm text-slate-700">
+            <label class="flex items-center space-x-2">
+              <input type="radio" name="agentAction" value="foia" checked class="text-brand-500">
+              <span>Redactar Pedido de Acceso a la Información (Ley 27.275)</span>
+            </label>
+            <label class="flex items-center space-x-2">
+              <input type="radio" name="agentAction" value="memo" class="text-brand-500">
+              <span>Resumen ejecutivo y preguntas para fuentes</span>
+            </label>
+          </div>
+
+          <button onclick="runAgent()" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-semibold py-2.5 rounded-lg shadow transition-colors text-sm">
+            🤖 Generar Documento de Investigación
+          </button>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+            <span class="text-xs font-mono font-bold text-slate-500 uppercase">Documento Generado por el Agente</span>
+            <button onclick="copyDoc()" class="text-xs text-brand-600 hover:underline">Copiar texto</button>
+          </div>
+          <textarea id="agentOutput" readonly class="w-full flex-1 bg-slate-50 font-mono text-xs text-slate-800 p-3 rounded-lg border border-slate-200 focus:outline-none resize-none min-h-[260px]">
+A la Dirección General de Compras y Contrataciones del GCBA:
+
+REF: Solicitud de Información Pública en los términos de la Ley 104 de CABA / Ley Nacional 27.275.
+
+Por medio de la presente, en mi carácter de periodista, solicito se me brinde acceso a la siguiente información respecto a las contrataciones adjudicadas a la firma CORPORACIÓN PARA LA DEFENSA DEL SUR S.A.:
+
+1. Copia digital íntegra de los pliegos de bases y condiciones y actas de apertura de ofertas de los expedientes licitatorios del período 2024-2026.
+2. Detalle de los días hábiles otorgados entre la fecha de publicación en el Boletín Oficial y la fecha límite de presentación de ofertas en los 14 concursos con plazo inferior a 72 horas.
+3. Informar si se presentaron observaciones o impugnaciones por parte de otros potenciales oferentes respecto a los plazos establecidos.
+
+Fundamento el presente pedido en el derecho a la información pública, la transparencia activa y el control cívico de los fondos públicos.
+
+Quedo a la espera de su respuesta dentro del plazo legal de 15 días hábiles.
+Atentamente.
+          </textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: MODO CÍVICO -->
+    <section id="tab-civico" class="hidden space-y-6">
+      <div>
+        <h2 class="text-xl font-bold text-slate-900">Modo Cívico: El Futuro para el Ciudadano</h2>
+        <p class="text-sm text-slate-500">Cómo Rastro escala de una herramienta B2B de redacción a un portal público para que cualquier vecino consulte obras en su comunidad.</p>
+      </div>
+
+      <div class="bg-gradient-to-br from-brand-950 to-brand-900 text-white p-8 rounded-2xl shadow-lg border border-slate-800">
+        <div class="max-w-2xl">
+          <span class="bg-brand-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider font-mono">Fase 2: Audiencias</span>
+          <h3 class="text-2xl font-bold mt-4 mb-2">Traduciendo datos áridos a historias que le importan a la gente</h3>
+          <p class="text-slate-300 text-sm leading-relaxed mb-6">
+            En lugar de tablas de licitaciones ininteligibles, el ciudadano escribe: <i>«¿Qué obras de bacheo o escuelas se licitaron en mi comuna y quiénes ganaron?»</i>. El agente responde con Story Cards visuales y mapas interactivos.
+          </p>
+          <div class="bg-white/10 backdrop-blur p-4 rounded-xl border border-white/10 text-xs font-mono text-slate-200">
+            ✓ Escalabilidad regional (Argentina & México)<br>
+            ✓ Modelo B2B para medios independientes<br>
+            ✓ Fast-Track al Media Party Investment Club
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 font-mono">
+    RASTRO — Proyecto desarrollado por Giovanny Flores (México) & Gabo para Media Party Buenos Aires 2026.
+    <br>Alimentado por OpenARG MCP (+33.000 datasets oficiales de Argentina).
+  </footer>
+
+  <script>
+    function switchTab(tabName) {
+      ['alertas', 'ranking', 'copiloto', 'civico'].forEach(t => {
+        document.getElementById('tab-' + t).classList.add('hidden');
+        const btn = document.getElementById('tab-btn-' + t);
+        btn.classList.remove('border-brand-500', 'text-brand-500', 'font-semibold');
+        btn.classList.add('border-transparent', 'text-slate-500', 'font-medium');
+      });
+
+      document.getElementById('tab-' + tabName).classList.remove('hidden');
+      const activeBtn = document.getElementById('tab-btn-' + tabName);
+      activeBtn.classList.remove('border-transparent', 'text-slate-500', 'font-medium');
+      activeBtn.classList.add('border-brand-500', 'text-brand-500', 'font-semibold');
+
+      if (tabName === 'ranking' && !window.chartRendered) {
+        renderChart();
+        window.chartRendered = true;
+      }
+    }
+
+    function renderChart() {
+      const ctx = document.getElementById('rankingChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Droguería Comarsa', 'Droguería Varadero', 'Redimer S.A.', 'Medi Sistem SRL', 'Defensa del Sur S.A.'],
+          datasets: [{
+            label: 'Monto Total Adjudicado (Billones ARS)',
+            data: [3.42, 1.07, 0.44, 0.29, 0.22],
+            backgroundColor: '#F58220',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { callback: v => '$' + v + ' B' }
+            }
+          }
+        }
+      });
+    }
+
+    function runAgent() {
+      const select = document.getElementById('casoSelect').value;
+      const out = document.getElementById('agentOutput');
+      if (select === 'comarsa') {
+        out.value = `INFORME DE AUDITORÍA AGÉNTICA:\nCaso: DROGUERÍA COMARSA S.A.\n\nPatrón: En el 78% de los concursos auditados en el Ministerio de Salud, se presentaron los mismos 3 competidores con ofertas marginalmente superiores.\n\nRecomendación de reporte:\n1. Solicitar el libro de actas de apertura de las licitaciones N° 101/2025 y 104/2025.\n2. Cotejar nómina de accionistas en el Boletín Oficial.\n\nPregunta sugerida para el vocero oficial: "¿Cuál fue el criterio técnico para no declarar desierta la licitación ante la falta de concurrencia de otros proveedores del mercado farmacéutico?"`;
+      } else {
+        out.value = `A la Dirección General de Compras y Contrataciones del GCBA:\n\nREF: Solicitud de Información Pública en los términos de la Ley 104 de CABA / Ley Nacional 27.275.\n\nPor medio de la presente, solicito copia íntegra de los expedientes licitatorios de CORPORACIÓN PARA LA DEFENSA DEL SUR S.A. que contaron con plazos de publicación inferiores a 72 horas hábiles durante el ejercicio 2025-2026.\n\nAtentamente,\nEquipo de Investigación Rastro.`;
+      }
+    }
+
+    function copyDoc() {
+      const copyText = document.getElementById('agentOutput');
+      copyText.select();
+      navigator.clipboard.writeText(copyText.value);
+      alert('¡Documento copiado al portapapeles!');
+    }
+  </script>
+</body>
+</html>
