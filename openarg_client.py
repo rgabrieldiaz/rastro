@@ -104,23 +104,27 @@ class OpenArgClient:
         self,
         tabla: str,
         operacion: str,
-        columna_valor: Optional[str] = None,
-        columnas_agrupacion: Optional[List[str]] = None,
-        orden: Optional[str] = None,
+        columna: Optional[str] = None,
+        agrupar_por: Optional[List[str]] = None,
+        orden: Optional[str] = "desc",
+        ordenar_por: Optional[str] = "valor",
         limite: int = 20,
+        filtros: Optional[Dict[str, Any]] = None,
     ) -> str:
         """Calcula totales, promedios, conteos, mínimos, máximos o rankings agrupados."""
         args: Dict[str, Any] = {
             "tabla": tabla,
             "operacion": operacion,
-            "limite": limite
+            "limite": limite,
+            "orden": orden,
+            "ordenar_por": ordenar_por
         }
-        if columna_valor:
-            args["columna_valor"] = columna_valor
-        if columnas_agrupacion:
-            args["columnas_agrupacion"] = columnas_agrupacion
-        if orden:
-            args["orden"] = orden
+        if columna:
+            args["columna"] = columna
+        if agrupar_por:
+            args["agrupar_por"] = agrupar_por
+        if filtros:
+            args["filtros"] = filtros
         return self._call_tool("agregar_datos", args)
 
     def consultar_datos_publicos(self, pregunta: str) -> str:
