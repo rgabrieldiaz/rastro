@@ -1,4 +1,8 @@
 {
   "framework": null,
-  "cleanUrls": true
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/deck", "destination": "/deck/index.html" },
+    { "source": "/deck/", "destination": "/deck/index.html" }
+  ]
 }
